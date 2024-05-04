@@ -24,6 +24,10 @@ public:
 
     void readEdges();
 
+    double tspBacktracking(vector<int>  &path);
+
+    void findMinPathUpToN(int curIndex,  int n, int len, double cost, double & ans, vector<int> & path,vector<int> & bestPath);
+
 private:
     Graph<Node> network;
     string nodeFile;
