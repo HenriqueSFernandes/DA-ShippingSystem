@@ -26,11 +26,10 @@ void Algorithms::readNodes() {
         getline(iss, id, ',');
         getline(iss, longitude, ',');
         getline(iss, latitude, '\r');
-        Node node(stoi(id));
-        node.setLongitude(stod(longitude));
-        node.setLongitude(stod(latitude));
-        network.addVertex(node);
-        //cout << "Read node with id: " << id << ", longitude: " << longitude << ", latitude: " << latitude << "\n";
+        auto existingVertex = network.findVertex(Node(stoi(id)));
+        existingVertex->getInfo().setLongitude(stod(longitude));
+        existingVertex->getInfo().setLongitude(stod(latitude));
+        cout << "Node with id: " << id << " was given longitude: " << longitude << " & latitude: " << latitude << "\n";
     }
 
     cout << "Finished loading nodes!" << "\n";
@@ -63,11 +62,26 @@ void Algorithms::readEdges() {
         getline(iss, distance, '\r');
         int s = stoi(originId);
         int d = stoi(targetId);
+
+        auto origin = Node(s);
+        auto source = network.findVertex(origin);
+        if (source == nullptr) {
+            network.addVertex(origin);
+            source = network.findVertex(origin);
+            cout << "Created node with id: " << originId << "\n";
+        }
+
+        auto target = Node(d);
+        auto dest = network.findVertex(target);
+        if (dest == nullptr) {
+            network.addVertex(target);
+            dest = network.findVertex(target);
+            cout << "Created node with id: " << targetId << "\n";
+        }
+
         double dis = stod(distance);
-        auto source = network.findVertex(Node(s));
-        auto dest = network.findVertex(Node(d));
-        network.addEdge(source->getInfo(), dest->getInfo(), dis);
-        //cout << "Read edge from node " << originId << " to node " << targetId << ", distance: " << distance << "\n";
+        network.addBidirectionalEdge(source->getInfo(), dest->getInfo(), dis);
+        cout << "Read edge from node " << originId << " to node " << targetId << ", distance: " << distance << "\n";
     }
 
     cout << "Finished loading edges!" << "\n";

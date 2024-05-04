@@ -6,7 +6,7 @@
 
 int main() {
     string nodeFile = "../data/Extra_Fully_Connected_Graphs/nodes.csv";
-    string edgeFile = "../data/Extra_Fully_Connected_Graphs/edges_900.csv";
+    string edgeFile = "../data/Extra_Fully_Connected_Graphs/edges_50.csv";
 
     //isto demora mais de 30 minutos no meu pc, tenham cuidado
     //string nodeFile = "../data/Real-world Graphs/graph3/nodes.csv";
@@ -14,7 +14,7 @@ int main() {
 
     Algorithms manager = Algorithms(nodeFile, edgeFile);
 
-    manager.readNodes();
     manager.readEdges();
+    manager.readNodes();
     return 0;
 }
