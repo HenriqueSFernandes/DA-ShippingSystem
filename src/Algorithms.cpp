@@ -27,8 +27,11 @@ void Algorithms::readNodes() {
         getline(iss, longitude, ',');
         getline(iss, latitude, '\r');
         auto existingVertex = network.findVertex(Node(stoi(id)));
-        existingVertex->getInfo().setLongitude(stod(longitude));
-        existingVertex->getInfo().setLongitude(stod(latitude));
+        if(existingVertex != nullptr) {
+            existingVertex->getInfo().setLongitude(stod(longitude));
+            existingVertex->getInfo().setLongitude(stod(latitude));
+        }
+
         cout << "Node with id: " << id << " was given longitude: " << longitude << " & latitude: " << latitude << "\n";
     }
 
@@ -87,4 +90,42 @@ void Algorithms::readEdges() {
     cout << "Finished loading edges!" << "\n";
 
     edgeCsv.close();
+}
+double Algorithms::tspBacktracking(vector<int> &path) {
+    double ans = 1e9;
+    path.resize(network.getNumVertex());
+    vector<int> bestPath(network.getNumVertex());
+    path[0] = 0;
+    bestPath[0] = 0;
+    network.findVertex(Node(0))->setVisited(true);
+    findMinPathUpToN(0, network.getNumVertex(), 1, 0, ans, path, bestPath);
+    path = bestPath;
+    return ans;
+}
+
+void Algorithms::findMinPathUpToN(int curIndex, int n, int len, double cost, double &ans, vector<int> &path, vector<int> &bestPath) {
+    auto ver = network.findVertex(Node(curIndex));
+    if (len == n) {
+        if(network.findVertex(Node(curIndex))->getAdj()[0]->getDest()->getInfo().getId() != 0) return;
+        else{
+            cost += network.findVertex(Node(curIndex))->getAdj()[0]->getWeight();
+        }
+
+        if (cost < ans) {
+            ans = cost;
+            bestPath = path; // Update bestPath if a better solution is found
+        }
+        return;
+    }
+    if (cost >= ans) return; // Prune unnecessary branches
+
+    for (auto edge : ver->getAdj()) {
+        auto neighbour = edge->getDest();
+        if (!neighbour->isVisited()) {
+            edge->getDest()->setVisited(true);
+            path[len] = edge->getDest()->getInfo().getId();
+            findMinPathUpToN(edge->getDest()->getInfo().getId(), n, len + 1, cost + edge->getWeight(), ans, path, bestPath);
+            edge->getDest()->setVisited(false);
+        }
+    }
 }

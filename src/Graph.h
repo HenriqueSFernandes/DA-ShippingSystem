@@ -345,7 +345,7 @@ void Vertex<T>::deleteEdge(Edge<T> *edge) {
 /********************** Edge  ****************************/
 
 template<class T>
-Edge<T>::Edge(Vertex<T> *orig, Vertex<T> *dest, double w): orig(orig), dest(dest), capacity(w) {}
+Edge<T>::Edge(Vertex<T> *orig, Vertex<T> *dest, double w): orig(orig), dest(dest), weight(w) {}
 
 template<class T>
 Vertex<T> *Edge<T>::getDest() const {
@@ -519,7 +519,7 @@ bool Graph<T>::addDirectedEdgeWithResidual(const T &sourc, const T &dest, double
     if (v1 == nullptr || v2 == nullptr)
         return false;
     auto e1 = v1->addEdge(v2, w);
-    auto e2 = v2->addEdge(v1, 0);
+    auto e2 = v2->addEdge(v1, w);
     e1->setReverse(e2);
     e2->setReverse(e1);
     return true;
