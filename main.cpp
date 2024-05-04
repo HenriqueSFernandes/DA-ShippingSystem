@@ -2,6 +2,7 @@
 // Created by memechanic on 04-05-2024.
 //
 
+#include <iomanip>
 #include "src/Algorithms.h"
 
 int main() {
@@ -17,7 +18,16 @@ int main() {
     manager.readEdges();
     //manager.readNodes();
     vector<int> path;
+    clock_t start, end;
+    start = clock();
     cout<<"RES IS "<<manager.tspBacktracking(path)<<endl;
+    end = clock();
+
+    // Calculating total time taken by the program.
+    double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+    cout << "Time taken by program is : " << fixed
+         << time_taken << setprecision(5);
+    cout << " sec " << endl;
     for(auto i : path){
         cout << i << " ";
     }
