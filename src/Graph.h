@@ -20,6 +20,7 @@ class Edge;
 template<class T>
 class Vertex {
 public:
+    int queueIndex;
     Vertex(T in);
 
     bool operator<(Vertex<T> &vertex) const;
