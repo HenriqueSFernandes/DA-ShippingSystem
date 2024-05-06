@@ -180,12 +180,10 @@ double Algorithms::tspTriangularAprox(vector<int> &path) {
 
 
     for (int i = 0; i < path.size() ; i++) {
-        cout<<"Path size: "<<path.size()<<"\n";
-        cout<<"i: "<<i<<"\n";
+
         auto v = network.findVertex(path[i]);
         auto w = network.findVertex(path[i + 1]);
         if(i==path.size()-1) {
-            cout << "Last vertex\n";
             w = network.findVertex(path[0]);
         }
 
