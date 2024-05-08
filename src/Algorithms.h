@@ -28,6 +28,13 @@ public:
 
     void findMinPathUpToN(int curIndex,  int n, int len, double cost, double & ans, vector<int> & path,vector<int> & bestPath);
 
+    std::vector<Vertex<Node> *> prim(Graph<Node> * g);
+
+    double tspTriangularAprox(vector<int> &path);
+
+    double haversine(double lat1, double lon1,
+                                 double lat2, double lon2);
+
 private:
     Graph<Node> network;
     string nodeFile;
