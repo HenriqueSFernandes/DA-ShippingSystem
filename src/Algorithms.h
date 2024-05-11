@@ -32,8 +32,11 @@ public:
 
     double tspTriangularAprox(vector<int> &path);
 
-    double haversine(double lat1, double lon1,
-                                 double lat2, double lon2);
+    double haversine(double lat1, double lon1, double lat2, double lon2);
+
+    double tspNearestNeighbour(vector<int> &path);
+
+    Vertex<Node> *findClosestNode(Vertex<Node> *current);
 
 private:
     Graph<Node> network;

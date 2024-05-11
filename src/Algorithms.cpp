@@ -32,11 +32,12 @@ void Algorithms::readNodes() {
         getline(iss, latitude, '\r');
         auto existingVertex = network.findVertex(Node(stoi(id)));
         if(existingVertex != nullptr) {
-            existingVertex->getInfo().setLongitude(stod(longitude));
-            existingVertex->getInfo().setLongitude(stod(latitude));
+            Node new_node = Node(existingVertex->getInfo().getId());
+            new_node.setLongitude(stod(longitude));
+            new_node.setLatitude(stod(latitude));
+            existingVertex->setInfo(new_node);
+            cout << "Node with id: " << id << " was given longitude: " << longitude << " & latitude: " << latitude << "\n";
         }
-
-        cout << "Node with id: " << id << " was given longitude: " << longitude << " & latitude: " << latitude << "\n";
     }
 
     cout << "Finished loading nodes!" << "\n";
@@ -135,7 +136,6 @@ void Algorithms::findMinPathUpToN(int curIndex, int n, int len, double cost, dou
 }
 
 std::vector<Vertex<Node> *> Algorithms::prim(Graph<Node> * g) {
-    // TODO
     //initializar valores de dist
     vector<Vertex<Node> *> MST;
     MutablePriorityQueue<Vertex<Node> > myq_queue;
@@ -232,4 +232,66 @@ double Algorithms::haversine(double lat1, double lon1,
     double rad = 6371;
     double c = 2 * asin(sqrt(a));
     return rad * c;
+}
+
+double Algorithms::tspNearestNeighbour(vector<int> &path) {
+    for (auto vertex: network.getVertexSet()) {
+        vertex->setVisited(false);
+    }
+
+    Vertex<Node> * currVertex = network.findVertex(Node(0));
+    path.push_back(0);
+    Vertex<Node> *nextVertex;
+    currVertex->setVisited(true);
+    double ans = 0;
+    int curr_visit = 1;
+
+    while (curr_visit < network.getNumVertex()) {
+        double minDistance = numeric_limits<double>::max();
+        for (auto edge: currVertex->getAdj()) {
+            if (edge->getWeight() < minDistance && !edge->getDest()->isVisited()) {
+                minDistance = edge->getWeight();
+                nextVertex = edge->getDest();
+            }
+        }
+
+        if (currVertex == nextVertex) {
+            nextVertex = findClosestNode(currVertex);
+            minDistance = haversine(currVertex->getInfo().getLatitude(), currVertex->getInfo().getLongitude(),
+                                    nextVertex->getInfo().getLatitude(), nextVertex->getInfo().getLongitude());
+        }
+
+        ans += minDistance;
+        path.push_back(nextVertex->getInfo().getId());
+        curr_visit++;
+        nextVertex->setVisited(true);
+        currVertex = nextVertex;
+    }
+
+    auto first = network.findVertex(0)->getInfo();
+    ans += currVertex->getAdj()[0] == nullptr ? haversine(currVertex->getInfo().getLatitude(), currVertex->getInfo().getLongitude(),
+                                                          first.getLatitude(), first.getLongitude()) :
+                                                                  currVertex->getAdj()[0]->getWeight();
+    path.push_back(0);
+
+    return ans;
+}
+
+Vertex<Node> *Algorithms::findClosestNode(Vertex<Node> *current) {
+    auto minDistance = numeric_limits<double>::max();
+    Vertex<Node> *closest;
+    for (auto vertex: network.getVertexSet()) {
+        for (auto edge : current->getAdj()) {
+            if (edge->getDest() == vertex || vertex->isVisited())
+                continue;
+        }
+        double distance = haversine(current->getInfo().getLatitude(), current->getInfo().getLongitude(),
+                                    vertex->getInfo().getLatitude(), vertex->getInfo().getLongitude());
+        if (distance < minDistance) {
+            minDistance = distance;
+            closest = vertex;
+        }
+    }
+
+    return closest;
 }
