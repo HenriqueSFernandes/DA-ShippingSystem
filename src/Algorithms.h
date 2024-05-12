@@ -1,7 +1,4 @@
-//
-// Created by memechanic on 04-05-2024.
-//
-
+/// @file Algorithms.h
 #ifndef SHIPPING_SYSTEM_ALGORITHMS_H
 #define SHIPPING_SYSTEM_ALGORITHMS_H
 
@@ -16,24 +13,82 @@
 
 using namespace std;
 
+/**
+ * @brief The main class of the program. It is responsible for running all the algorithms and controlling the network.
+ */
 class Algorithms {
 public:
+    /**
+     * @brief Constructor that takes the name of the files as arguments.
+     * @param node_file The name of the file with the nodes.
+     * @param edge_file The name of the file with the edges.
+     */
     Algorithms(string node_file, string edge_file) : nodeFile(node_file), edgeFile(edge_file) {}
 
+    /**
+     * @brief Reads the contents of the nodes file.
+     */
     void readNodes();
 
+    /**
+     * @brief Reads the contents of the edges file.
+     */
     void readEdges();
 
-    double tspBacktracking(vector<int>  &path);
+    /**
+     * @brief Backtracking solution to the Travelling Salesperson Problem.
+     * @param path TODO
+     * Complexity: TODO
+     * More information: TODO
+     * @return TODO
+     */
+    double tspBacktracking(vector<int> &path);
 
-    void findMinPathUpToN(int curIndex,  int n, int len, double cost, double & ans, vector<int> & path,vector<int> & bestPath);
+    /**
+     * @brief TODO
+     * @param curIndex TODO
+     * @param n TODO
+     * @param len TODO
+     * @param cost TODO
+     * @param ans TODO
+     * @param path TODO
+     * @param bestPath TODO
+     * Complexity: TODO
+     * More information: TODO
+     */
+    void
+    findMinPathUpToN(int curIndex, int n, int len, double cost, double &ans, vector<int> &path, vector<int> &bestPath);
 
-    std::vector<Vertex<Node> *> prim(Graph<Node> * g);
+    /**
+     * @brief TODO
+     * @param g TODO
+     * Complexity: TODO
+     * More information: TODO
+     * @return TODO
+     */
+    std::vector<Vertex<Node> *> prim(Graph<Node> *g);
 
+    /**
+     * @brief TODO
+     * @param path TODO
+     * Complexity: TODO
+     * More infomation: TODO
+     * @return TODO
+     */
     double tspTriangularAprox(vector<int> &path);
 
-    double haversine(double lat1, double lon1, double lat2, double lon2);
-
+    /**
+     * @brief This function uses the haversine distance to calculate distance between 2 points on a sphere.
+     * @param lat1 First point latitude.
+     * @param lon1 First point longitude.
+     * @param lat2 Second point latitude.
+     * @param lon2 Second point longitude.
+     * @return The distance between the points.
+     */
+    double haversine(double lat1, double lon1,
+                     double lat2, double lon2);
+  
+    
     double tspNearestNeighbour(vector<int> &path);
 
     Vertex<Node> *findClosestNode(Vertex<Node> *current);

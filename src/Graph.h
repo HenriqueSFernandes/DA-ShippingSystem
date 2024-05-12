@@ -21,6 +21,7 @@ template<class T>
 class Vertex {
 public:
     int queueIndex;
+
     Vertex(T in);
 
     bool operator<(Vertex<T> &vertex) const;
@@ -60,6 +61,7 @@ public:
     void removeOutgoingEdges();
 
     bool isInSameScc() const;
+
     void setInSameScc(bool inSameScc);
 
 protected:
@@ -245,14 +247,17 @@ void Vertex<T>::removeOutgoingEdges() {
         deleteEdge(edge);
     }
 }
+
 template<class T>
 bool Vertex<T>::isInSameScc() const {
     return inSameSCC;
 }
+
 template<class T>
 void Vertex<T>::setInSameScc(bool inSameScc) {
     inSameSCC = inSameScc;
 }
+
 template<class T>
 bool Vertex<T>::operator<(Vertex<T> &vertex) const {
     return this->dist < vertex.dist;
