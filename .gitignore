@@ -1,3 +1,4 @@
 cmake-build-debug/
 .idea/
 graph3/
+docs/doxygen_documentation/html/

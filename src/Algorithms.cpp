@@ -31,7 +31,7 @@ void Algorithms::readNodes() {
         getline(iss, longitude, ',');
         getline(iss, latitude, '\r');
         auto existingVertex = network.findVertex(Node(stoi(id)));
-        if(existingVertex != nullptr) {
+        if (existingVertex != nullptr) {
             existingVertex->getInfo().setLongitude(stod(longitude));
             existingVertex->getInfo().setLongitude(stod(latitude));
         }
@@ -95,6 +95,7 @@ void Algorithms::readEdges() {
 
     edgeCsv.close();
 }
+
 double Algorithms::tspBacktracking(vector<int> &path) {
     double ans = 1e9;
     path.resize(network.getNumVertex());
@@ -107,11 +108,12 @@ double Algorithms::tspBacktracking(vector<int> &path) {
     return ans;
 }
 
-void Algorithms::findMinPathUpToN(int curIndex, int n, int len, double cost, double &ans, vector<int> &path, vector<int> &bestPath) {
+void Algorithms::findMinPathUpToN(int curIndex, int n, int len, double cost, double &ans, vector<int> &path,
+                                  vector<int> &bestPath) {
     auto ver = network.findVertex(Node(curIndex));
     if (len == n) {
-        if(network.findVertex(Node(curIndex))->getAdj()[0]->getDest()->getInfo().getId() != 0) return;
-        else{
+        if (network.findVertex(Node(curIndex))->getAdj()[0]->getDest()->getInfo().getId() != 0) return;
+        else {
             cost += network.findVertex(Node(curIndex))->getAdj()[0]->getWeight();
         }
 
@@ -123,34 +125,35 @@ void Algorithms::findMinPathUpToN(int curIndex, int n, int len, double cost, dou
     }
     if (cost >= ans) return; // Prune unnecessary branches
 
-    for (auto edge : ver->getAdj()) {
+    for (auto edge: ver->getAdj()) {
         auto neighbour = edge->getDest();
         if (!neighbour->isVisited()) {
             edge->getDest()->setVisited(true);
             path[len] = edge->getDest()->getInfo().getId();
-            findMinPathUpToN(edge->getDest()->getInfo().getId(), n, len + 1, cost + edge->getWeight(), ans, path, bestPath);
+            findMinPathUpToN(edge->getDest()->getInfo().getId(), n, len + 1, cost + edge->getWeight(), ans, path,
+                             bestPath);
             edge->getDest()->setVisited(false);
         }
     }
 }
 
-std::vector<Vertex<Node> *> Algorithms::prim(Graph<Node> * g) {
+std::vector<Vertex<Node> *> Algorithms::prim(Graph<Node> *g) {
     // TODO
     //initializar valores de dist
     vector<Vertex<Node> *> MST;
     MutablePriorityQueue<Vertex<Node> > myq_queue;
-    for( auto vertex : g->getVertexSet()) {
+    for (auto vertex: g->getVertexSet()) {
         vertex->setDist(INT_MAX);
         myq_queue.insert(vertex);
     }
-    Vertex<Node> * head = g->getVertexSet().at(0);
+    Vertex<Node> *head = g->getVertexSet().at(0);
     head->setDist(0); // first vertex in out mST
     myq_queue.decreaseKey(head);
-    while(!myq_queue.empty()) {
-        auto u=myq_queue.extractMin();
+    while (!myq_queue.empty()) {
+        auto u = myq_queue.extractMin();
         u->setProcesssing(true);
         MST.push_back(u);
-        for (auto edge : u->getAdj()) {
+        for (auto edge: u->getAdj()) {
             Vertex<Node> *v = edge->getDest();
             if (!v->isProcessing() && edge->getWeight() < v->getDist()) {
                 v->setDist(edge->getWeight());
@@ -163,34 +166,36 @@ std::vector<Vertex<Node> *> Algorithms::prim(Graph<Node> * g) {
 
     return MST;
 }
+
 void dfs(Vertex<Node> *v, vector<int> &path) {
     path.push_back(v->getInfo().getId());
     v->setVisited(true);
-    for (auto edge : v->getAdj()) {
-        if ( !edge->getDest()->isVisited() && edge->getDest()->getPath()->getOrig()->getInfo()==v->getInfo()  ){
+    for (auto edge: v->getAdj()) {
+        if (!edge->getDest()->isVisited() && edge->getDest()->getPath()->getOrig()->getInfo() == v->getInfo()) {
             dfs(edge->getDest(), path);
         }
     }
 }
+
 double Algorithms::tspTriangularAprox(vector<int> &path) {
     double ans = 0;
     vector<Vertex<Node> *> MST = prim(&network);
-    auto ver= MST[0];
+    auto ver = MST[0];
     dfs(ver, path);
 
 
-    for (int i = 0; i < path.size() ; i++) {
+    for (int i = 0; i < path.size(); i++) {
 
         auto v = network.findVertex(path[i]);
         auto w = network.findVertex(path[i + 1]);
-        if(i==path.size()-1) {
+        if (i == path.size() - 1) {
             w = network.findVertex(path[0]);
         }
 
         auto edges = v->getAdj();
 
         bool edgeExists = false;
-        for (auto e : edges) {
+        for (auto e: edges) {
             if (e->getDest()->getInfo().getId() == w->getInfo().getId()) {
                 // Edge exists, use its distance
                 ans += e->getWeight();
@@ -201,7 +206,8 @@ double Algorithms::tspTriangularAprox(vector<int> &path) {
 
         if (!edgeExists) {
             // Edge does not exist, calculate distance using haversine formula
-            double dist = haversine(v->getInfo().getLatitude(), v->getInfo().getLongitude(), w->getInfo().getLatitude(), w->getInfo().getLongitude());
+            double dist = haversine(v->getInfo().getLatitude(), v->getInfo().getLongitude(), w->getInfo().getLatitude(),
+                                    w->getInfo().getLongitude());
             ans += dist;
         }
     }
@@ -213,7 +219,7 @@ double Algorithms::tspTriangularAprox(vector<int> &path) {
 }
 
 double Algorithms::haversine(double lat1, double lon1,
-                                   double lat2, double lon2) {
+                             double lat2, double lon2) {
     // distance between latitudes
     // and longitudes
     double dLat = (lat2 - lat1) *
