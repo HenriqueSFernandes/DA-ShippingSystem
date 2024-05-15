@@ -1,7 +1,3 @@
-//
-// Created by memechanic on 04-05-2024.
-//
-
 #include <iomanip>
 #include "src/Algorithms.h"
 
