@@ -345,11 +345,11 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int start
     double ans = 0;
     int curr_visit = 1;
 
-    std::stack<std::pair<Vertex<Node>*, double>> stack;
-    stack.emplace(currVertex, 0);
+    std::stack<Vertex<Node>*> stack;
+    stack.push(currVertex);
 
     while (!stack.empty()) {
-        auto [currVertex, distance] = stack.top();
+        currVertex = stack.top();
         stack.pop();
 
         if (curr_visit == network.getNumVertex()) {
@@ -388,7 +388,7 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int start
         path.push_back(nextVertex->getInfo().getId());
         curr_visit++;
         nextVertex->setVisited(true);
-        stack.emplace(nextVertex, minDistance);
+        stack.push(nextVertex);
     }
 
     return std::numeric_limits<double>::infinity();
