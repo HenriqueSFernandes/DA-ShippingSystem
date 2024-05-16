@@ -6,8 +6,8 @@
 #include "src/Algorithms.h"
 
 int main() {
-    string nodeFile = "../data/Extra_Fully_Connected_Graphs/nodes.csv";
-    string edgeFile = "../data/Extra_Fully_Connected_Graphs/edges_900.csv";
+    string nodeFile = "../data/Real-world Graphs/graph1/nodes.csv";
+    string edgeFile = "../data/Real-world Graphs/graph1/edges.csv";
 
     //isto demora mais de 30 minutos no meu pc, tenham cuidado
     //string nodeFile = "../data/Real-world Graphs/graph3/nodes.csv";
@@ -21,7 +21,8 @@ int main() {
     clock_t start, end;
     start = clock();
     //cout<<"RES IS "<<manager.tspTriangularAprox(path)<<endl;
-    cout<<"RES IS "<<manager.tspNearestNeighbour(path)<<endl;
+    //cout<<"RES IS "<<manager.tspNearestNeighbour(path)<<endl;
+    cout<<"RES IS "<<manager.tspModifiedNearestNeighbour(path, 500)<<endl;
     end = clock();
 
     // Calculating total time taken by the program.
