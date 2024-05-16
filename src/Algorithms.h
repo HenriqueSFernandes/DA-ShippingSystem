@@ -93,6 +93,10 @@ public:
 
     Vertex<Node> *findClosestNode(Vertex<Node> *current);
 
+    bool isTSPFeasible(int start);
+
+    double tspModifiedNearestNeighbour(std::vector<int>& path, int start);
+
 private:
     Graph<Node> network;
     string nodeFile;
