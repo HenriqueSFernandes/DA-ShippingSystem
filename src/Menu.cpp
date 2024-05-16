@@ -22,13 +22,13 @@ void Menu::clearScreen() {
 #endif
 }
 
-Menu::Menu() : algorithms("", "") {}
+Menu::Menu() : manager("", "") {}
 
 
 void Menu::start() {
-    algorithms = chooseGraphType();
-    cout << "Edge file: " << algorithms.getEdgeFile() << "\n";
-    cout << "Node file: " << algorithms.getNodeFile() << "\n";
+    manager = chooseGraphType();
+    cout << "Edge file: " << manager.getEdgeFile() << "\n";
+    cout << "Node file: " << manager.getNodeFile() << "\n";
 }
 
 
@@ -74,8 +74,9 @@ Algorithms Menu::chooseGraphType() {
 }
 
 void Menu::loadGraph() {
-    algorithms.readEdges();
-    algorithms.readNodes();
+
+    manager.readEdges();
+    manager.readNodes();
 }
 
 string Menu::selectSmallGraph() {

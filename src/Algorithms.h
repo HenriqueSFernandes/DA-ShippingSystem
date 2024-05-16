@@ -23,7 +23,7 @@ public:
      * @param node_file The name of the file with the nodes.
      * @param edge_file The name of the file with the edges.
      */
-    Algorithms(string node_file, string edge_file) : nodeFile(node_file), edgeFile(edge_file) {}
+    Algorithms(string node_file, string edge_file) : nodeFile(std::move(node_file)), edgeFile(std::move(edge_file)) {}
 
     /**
      * @brief Reads the contents of the nodes file.

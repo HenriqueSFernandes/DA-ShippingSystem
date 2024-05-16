@@ -6,9 +6,26 @@
 #include "Algorithms.h"
 
 class Menu {
-private: Algorithms algorithms;
+private:
+    /**
+     * @brief An instance of the Algorithms class.
+     *
+     * This instance, named manager, is used to manage the algorithms that are used in the Menu class.
+     * It provides access to the various algorithms and methods defined in the Algorithms class.
+     */
+    Algorithms manager;
 public:
 
+    /**
+     * @brief Menu constructor.
+     *
+     * This constructor initializes the manager member of the Menu class.
+     * The manager is an instance of the Algorithms class, which is used to manage the algorithms that are used in the Menu class.
+     * It provides access to the various algorithms and methods defined in the Algorithms class.
+     *
+     * The manager is initialized with two empty strings as parameters. These strings represent the filenames of the nodes and edges of the graph that the manager will handle.
+     * An empty string indicates that no file has been selected yet.
+     */
     Menu();
 
     /**
@@ -84,8 +101,34 @@ public:
      */
     static std::string selectSmallGraph();
 
+    /**
+     * @brief Allows the user to select a medium graph.
+     *
+     * This function presents the user with a menu of medium graphs to choose from.
+     * The user can choose between graphs with different numbers of edges, ranging from 25 to 900, or exit the menu.
+     * The user's choice is read from the console input.
+     *
+     * If the user chooses a valid option (1 to 12), the function returns the filename of the chosen graph.
+     * If the user chooses to exit (option 0), the function returns an empty string.
+     * If the user chooses an invalid option, the function displays an error message and prompts the user to choose again.
+     *
+     * @return The filename of the chosen graph, or an empty string if the user chooses to exit.
+     */
     static std::string selectMediumGraph();
 
+    /**
+     * @brief Allows the user to select a large graph.
+     *
+     * This function presents the user with a menu of large graphs to choose from.
+     * The user can choose between graphs with different numbers of edges, ranging from ~500K to ~10M, or exit the menu.
+     * The user's choice is read from the console input.
+     *
+     * If the user chooses a valid option (1 to 3), the function returns a pair of filenames of the chosen graph's nodes and edges.
+     * If the user chooses to exit (option 0), the function returns a pair of empty strings.
+     * If the user chooses an invalid option, the function displays an error message and prompts the user to choose again.
+     *
+     * @return A pair of filenames of the chosen graph's nodes and edges, or a pair of empty strings if the user chooses to exit.
+     */
     static std::pair<std::string, std::string> selectLargeGraph();
 };
 
