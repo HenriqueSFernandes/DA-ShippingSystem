@@ -31,12 +31,13 @@ void Algorithms::readNodes() {
         getline(iss, longitude, ',');
         getline(iss, latitude, '\r');
         auto existingVertex = network.findVertex(Node(stoi(id)));
-        if(existingVertex != nullptr) {
+        if (existingVertex != nullptr) {
             Node new_node = Node(existingVertex->getInfo().getId());
             new_node.setLongitude(stod(longitude));
             new_node.setLatitude(stod(latitude));
             existingVertex->setInfo(new_node);
-            cout << "Node with id: " << id << " was given longitude: " << longitude << " & latitude: " << latitude << "\n";
+            cout << "Node with id: " << id << " was given longitude: " << longitude << " & latitude: " << latitude
+                 << "\n";
         }
     }
 
@@ -138,7 +139,7 @@ void Algorithms::findMinPathUpToN(int curIndex, int n, int len, double cost, dou
     }
 }
 
-std::vector<Vertex<Node> *> Algorithms::prim(Graph<Node> * g) {
+std::vector<Vertex<Node> *> Algorithms::prim(Graph<Node> *g) {
     //initializar valores de dist
     vector<Vertex<Node> *> MST;
     MutablePriorityQueue<Vertex<Node> > myq_queue;
@@ -186,10 +187,10 @@ double Algorithms::tspTriangularAprox(vector<int> &path) {
 
     for (int i = 0; i < path.size(); i++) {
 
-        auto v = network.findVertex(path[i]);
-        auto w = network.findVertex(path[i + 1]);
+        auto v = network.findVertex(Node(path[i]));
+        auto w = network.findVertex(Node(path[i + 1]));
         if (i == path.size() - 1) {
-            w = network.findVertex(path[0]);
+            w = network.findVertex(Node(path[0]));
         }
 
         auto edges = v->getAdj();
@@ -245,7 +246,7 @@ double Algorithms::tspNearestNeighbour(vector<int> &path) {
         vertex->setVisited(false);
     }
 
-    Vertex<Node> * currVertex = network.findVertex(Node(0));
+    Vertex<Node> *currVertex = network.findVertex(Node(0));
     path.push_back(0);
     Vertex<Node> *nextVertex;
     currVertex->setVisited(true);
@@ -274,10 +275,11 @@ double Algorithms::tspNearestNeighbour(vector<int> &path) {
         currVertex = nextVertex;
     }
 
-    auto first = network.findVertex(0)->getInfo();
-    ans += currVertex->getAdj()[0] == nullptr ? haversine(currVertex->getInfo().getLatitude(), currVertex->getInfo().getLongitude(),
+    auto first = network.findVertex(Node(0))->getInfo();
+    ans += currVertex->getAdj()[0] == nullptr ? haversine(currVertex->getInfo().getLatitude(),
+                                                          currVertex->getInfo().getLongitude(),
                                                           first.getLatitude(), first.getLongitude()) :
-                                                                  currVertex->getAdj()[0]->getWeight();
+           currVertex->getAdj()[0]->getWeight();
     path.push_back(0);
 
     return ans;
@@ -287,7 +289,7 @@ Vertex<Node> *Algorithms::findClosestNode(Vertex<Node> *current) {
     auto minDistance = numeric_limits<double>::max();
     Vertex<Node> *closest;
     for (auto vertex: network.getVertexSet()) {
-        for (auto edge : current->getAdj()) {
+        for (auto edge: current->getAdj()) {
             if (edge->getDest() == vertex || vertex->isVisited())
                 continue;
         }
@@ -300,4 +302,12 @@ Vertex<Node> *Algorithms::findClosestNode(Vertex<Node> *current) {
     }
 
     return closest;
+}
+
+string Algorithms::getNodeFile() {
+    return this->nodeFile;
+}
+
+string Algorithms::getEdgeFile() {
+    return this->edgeFile;
 }

@@ -87,11 +87,23 @@ public:
      */
     double haversine(double lat1, double lon1,
                      double lat2, double lon2);
-  
-    
+
+
     double tspNearestNeighbour(vector<int> &path);
 
     Vertex<Node> *findClosestNode(Vertex<Node> *current);
+
+    /**
+     * @brief Gets the name of the node file.
+     * @return The name of the node file.
+     */
+    string getNodeFile();
+
+    /**
+     * @brief Gets the name of the edge file.
+     * @return The name of the edge file.
+     */
+    string getEdgeFile();
 
 private:
     Graph<Node> network;

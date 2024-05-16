@@ -8,5 +8,4 @@ add_executable(shipping-system
         src/Graph.h
         src/Node.cpp
         src/Algorithms.cpp
-        src/Menu.cpp
-        src/Menu.h)
+        src/Menu.cpp)
