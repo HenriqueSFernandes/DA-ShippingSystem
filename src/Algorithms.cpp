@@ -419,7 +419,7 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
         backtrackedNodes.clear(); // novo caminho começou, podemos voltar a visitar estes vértices.
     }
     backs = backtracks;
-    resetNetwork()
+    resetNetwork();
     return ans;
 }
 
@@ -433,7 +433,7 @@ string Algorithms::getEdgeFile() {
 
 void Algorithms::resetNetwork() {
     for (auto v : network.getVertexSet()){
-        v->setVisited(false);
-        v->setProcesssing(false);
+        v.second->setVisited(false);
+        v.second->setProcesssing(false);
     }
 }
