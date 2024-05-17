@@ -10,7 +10,6 @@
 #include <climits>
 #include <cmath>
 #include <unordered_set>
-#include <stack>
 
 void Algorithms::readNodes() {
     cout << "Loading nodes..." << endl;
@@ -145,8 +144,8 @@ std::vector<Vertex<Node> *> Algorithms::prim(Graph<Node> * g) {
     vector<Vertex<Node> *> MST;
     MutablePriorityQueue<Vertex<Node> > myq_queue;
     for (auto vertex: g->getVertexSet()) {
-        vertex->setDist(INT_MAX);
-        myq_queue.insert(vertex);
+        vertex.second->setDist(INT_MAX);
+        myq_queue.insert(vertex.second);
     }
     Vertex<Node> *head = g->getVertexSet().at(0);
     head->setDist(0); // first vertex in out mST
@@ -244,7 +243,7 @@ double Algorithms::haversine(double lat1, double lon1,
 
 double Algorithms::tspNearestNeighbour(vector<int> &path) {
     for (auto vertex: network.getVertexSet()) {
-        vertex->setVisited(false);
+        vertex.second->setVisited(false);
     }
 
     Vertex<Node> * currVertex = network.findVertex(Node(0));
@@ -290,15 +289,15 @@ Vertex<Node> *Algorithms::findClosestNode(Vertex<Node> *current) {
     auto minDistance = numeric_limits<double>::max();
     Vertex<Node> *closest;
     for (auto vertex: network.getVertexSet()) {
-        for (auto edge : current->getAdj()) {
-            if (edge->getDest() == vertex || vertex->isVisited())
+        for (auto edge: current->getAdj()) {
+            if (edge->getDest() == vertex.second || vertex.second->isVisited())
                 continue;
         }
         double distance = haversine(current->getInfo().getLatitude(), current->getInfo().getLongitude(),
-                                    vertex->getInfo().getLatitude(), vertex->getInfo().getLongitude());
+                                    vertex.second->getInfo().getLatitude(), vertex.second->getInfo().getLongitude());
         if (distance < minDistance) {
             minDistance = distance;
-            closest = vertex;
+            closest = vertex.second;
         }
     }
 
@@ -331,59 +330,83 @@ bool Algorithms::isTSPFeasible(int start) {
     return visited.size() == network.getNumVertex();
 }
 
-double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int start) {
+double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start) {
     if (!isTSPFeasible(start)) {
         resetNetwork();
         return std::numeric_limits<double>::infinity(); // Indicate that TSP is not possible
     }
 
     for (auto vertex : network.getVertexSet()) {
-        vertex->setVisited(false);
+        vertex.second->setVisited(false);
     }
 
     Vertex<Node>* currVertex = network.findVertex(Node(start));
     path.push_back(start);
-    Vertex<Node>* nextVertex = nullptr;
     currVertex->setVisited(true);
     double ans = 0;
     int curr_visit = 1;
+    int backtracks = 0;
+    bool finished = false;
+    std::unordered_set<int> backtrackedNodes; // set de vértices sem saída
 
-    std::stack<Vertex<Node>*> stack;
-    stack.push(currVertex);
-
-    while (!stack.empty()) {
-        currVertex = stack.top();
-        stack.pop();
-
+    while (curr_visit <= network.getNumVertex()) {
         if (curr_visit == network.getNumVertex()) {
             for (auto edge : currVertex->getAdj()) {
                 if (edge->getDest()->getInfo().getId() == start) {
                     ans += edge->getWeight();
                     path.push_back(start);
-                    resetNetwork();
-                    return ans;
+                    finished = true;
                 }
             }
-            resetNetwork();
-            return std::numeric_limits<double>::infinity();
-        }
-
-        double minDistance = std::numeric_limits<double>::max();
-        nextVertex = nullptr;
-
-        for (auto edge : currVertex->getAdj()) {
-            Vertex<Node>* dest = edge->getDest();
-            if (!dest->isVisited() && edge->getWeight() < minDistance) {
-                minDistance = edge->getWeight();
-                nextVertex = dest;
+            if (!finished) {
+                if (!path.empty()) {
+                    int backtrackedNode = path.back();
+                    currVertex->setVisited(false);
+                    path.pop_back();
+                    backtrackedNodes.insert(backtrackedNode);
+                    if (!path.empty()) {
+                        int lastVertexId = path.back();
+                        currVertex = network.findVertex(Node(lastVertexId));
+                        currVertex->setVisited(false);
+                        curr_visit--;
+                        backtracks++;
+                    } else {
+                        resetNetwork();
+                        return std::numeric_limits<double>::infinity();
+                    }
+                }
+                continue;
             }
         }
 
+        if (finished)
+            break;
+
+        double minDistance = numeric_limits<double>::max();
+        Vertex<Node>* nextVertex = nullptr;
+        for (auto edge : currVertex->getAdj()) {
+            if (edge->getWeight() < minDistance && !edge->getDest()->isVisited() &&
+            backtrackedNodes.find(edge->getDest()->getInfo().getId()) == backtrackedNodes.end()) { // não se visitam os vértices sem saída
+                minDistance = edge->getWeight();
+                nextVertex = edge->getDest();
+            }
+        }
         if (nextVertex == nullptr) {
             if (!path.empty()) {
+                int backtrackedNode = path.back();
+                currVertex->setVisited(false);
                 path.pop_back();
-                curr_visit--;
-                cout << "Performed backtrack\n";
+                backtrackedNodes.insert(backtrackedNode);
+                if (!path.empty()) {
+                    int lastVertexId = path.back();
+                    currVertex = network.findVertex(Node(lastVertexId));
+                    currVertex->setVisited(false);
+                    curr_visit--;
+                    backtracks++;
+                } else {
+                    resetNetwork();
+                    return std::numeric_limits<double>::infinity();
+                }
             }
             continue;
         }
@@ -392,11 +415,12 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int start
         path.push_back(nextVertex->getInfo().getId());
         curr_visit++;
         nextVertex->setVisited(true);
-        stack.push(nextVertex);
+        currVertex = nextVertex;
+        backtrackedNodes.clear(); // novo caminho começou, podemos voltar a visitar estes vértices.
     }
-
-    resetNetwork();
-    return std::numeric_limits<double>::infinity();
+    backs = backtracks;
+    resetNetwork()
+    return ans;
 }
 
 string Algorithms::getNodeFile() {

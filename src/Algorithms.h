@@ -97,7 +97,7 @@ public:
 
     bool isTSPFeasible(int start);
 
-    double tspModifiedNearestNeighbour(std::vector<int>& path, int start);
+    double tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start);
 
 private:
     Graph<Node> network;
