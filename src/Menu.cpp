@@ -118,8 +118,12 @@ void Menu::loadGraph() {
     }
     cout << "Edge file: " << manager.getEdgeFile() << "\n";
     cout << "Node file: " << manager.getNodeFile() << "\n";
+    auto time1 = chrono::high_resolution_clock::now();
     manager.readEdges();
     manager.readNodes();
+    auto time2 = chrono::high_resolution_clock::now();
+    chrono::duration<double> totalTime = time2 - time1;
+    cout << "Time took to load the graph: " << totalTime.count() << " seconds\n";
 }
 
 void Menu::chooseAlgorithm() {
@@ -138,27 +142,48 @@ void Menu::chooseAlgorithm() {
         cin >> option;
         if (option == "1") {
             vector<int> path;
+            auto time1 = chrono::high_resolution_clock::now();
             double distance = manager.tspBacktracking(path);
-            cout << "Total distance: " << distance << endl;
+            auto time2 = chrono::high_resolution_clock::now();
+            manager.resetNetwork();
             printPath(path);
+            cout << "Total distance: " << distance << endl;
+            chrono::duration<double> totalTime = time2 - time1;
+            cout << "Duration: " << totalTime.count() << " seconds\n";
         } else if (option == "2") {
             vector<int> path;
+            auto time1 = chrono::high_resolution_clock::now();
             double distance = manager.tspTriangularApprox(path);
-            cout << "Total distance: " << distance << endl;
+            auto time2 = chrono::high_resolution_clock::now();
+            manager.resetNetwork();
             printPath(path);
+            cout << "Total distance: " << distance << endl;
+            chrono::duration<double> totalTime = time2 - time1;
+            cout << "Duration: " << totalTime.count() << " seconds\n";
         } else if (option == "3") {
-
             vector<int> path;
+            auto time1 = chrono::high_resolution_clock::now();
             double distance = manager.tspNearestNeighbour(path);
-            cout << "Total distance: " << distance << endl;
+            auto time2 = chrono::high_resolution_clock::now();
+            manager.resetNetwork();
             printPath(path);
+            cout << "Total distance: " << distance << endl;
+            chrono::duration<double> totalTime = time2 - time1;
+            cout << "Duration: " << totalTime.count() << " seconds\n";
         } else if (option == "4") {
             cout << "What node do you want to choose as the starting node?\n";
             int start = getValidInt();
             vector<int> path;
-            double distance = manager.tspModifiedNearestNeighbour(path, start);
-            cout << "Total distance: " << distance << endl;
+            int numberOfBacktracks;
+            auto time1 = chrono::high_resolution_clock::now();
+            double distance = manager.tspModifiedNearestNeighbour(path, numberOfBacktracks, start);
+            auto time2 = chrono::high_resolution_clock::now();
+            manager.resetNetwork();
             printPath(path);
+            cout << "Total distance: " << distance << endl;
+            cout << "Number of backtracks: " << numberOfBacktracks << endl;
+            chrono::duration<double> totalTime = time2 - time1;
+            cout << "Duration: " << totalTime.count() << " seconds\n";
         } else if (option == "0") {
             break;
         } else {

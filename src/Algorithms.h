@@ -9,6 +9,7 @@
 #include <map>
 #include <string>
 #include <ostream>
+#include <chrono>
 
 
 using namespace std;
@@ -115,10 +116,6 @@ private:
     Graph<Node> network;
     string nodeFile;
     string edgeFile;
-
-    string getNodeFile();
-
-    string getEdgeFile();
 };
 
 

@@ -101,7 +101,6 @@ double Algorithms::tspBacktracking(vector<int> &path) {
     network.findVertex(Node(0))->setVisited(true);
     findMinPathUpToN(0, network.getNumVertex(), 1, 0, ans, path, bestPath);
     path = bestPath;
-    resetNetwork();
     return ans;
 }
 
@@ -207,8 +206,6 @@ double Algorithms::tspTriangularApprox(vector<int> &path) {
             ans += dist;
         }
     }
-
-    resetNetwork();
     return ans;
 
 
@@ -276,7 +273,6 @@ double Algorithms::tspNearestNeighbour(vector<int> &path) {
            currVertex->getAdj()[0]->getWeight();
     path.push_back(0);
 
-    resetNetwork();
     return ans;
 }
 
@@ -327,7 +323,6 @@ bool Algorithms::isTSPFeasible(int start) {
 
 double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start) {
     if (!isTSPFeasible(start)) {
-        resetNetwork();
         return std::numeric_limits<double>::infinity(); // Indicate that TSP is not possible
     }
 
@@ -366,7 +361,6 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
                         curr_visit--;
                         backtracks++;
                     } else {
-                        resetNetwork();
                         return std::numeric_limits<double>::infinity();
                     }
                 }
@@ -399,7 +393,6 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
                     curr_visit--;
                     backtracks++;
                 } else {
-                    resetNetwork();
                     return std::numeric_limits<double>::infinity();
                 }
             }
@@ -414,7 +407,6 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
         backtrackedNodes.clear(); // novo caminho começou, podemos voltar a visitar estes vértices.
     }
     backs = backtracks;
-    resetNetwork();
     return ans;
 }
 
