@@ -10,7 +10,6 @@
 #include <climits>
 #include <cmath>
 #include <unordered_set>
-#include <stack>
 
 void Algorithms::readNodes() {
     cout << "Loading nodes..." << endl;
@@ -329,7 +328,7 @@ bool Algorithms::isTSPFeasible(int start) {
     return visited.size() == network.getNumVertex();
 }
 
-double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int start) {
+double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start) {
     if (!isTSPFeasible(start)) {
         return std::numeric_limits<double>::infinity(); // Indicate that TSP is not possible
     }
@@ -340,46 +339,39 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int start
 
     Vertex<Node>* currVertex = network.findVertex(Node(start));
     path.push_back(start);
-    Vertex<Node>* nextVertex = nullptr;
     currVertex->setVisited(true);
     double ans = 0;
     int curr_visit = 1;
+    int backtracks = 0;
+    std::unordered_set<int> backtrackedNodes;
 
-    std::stack<Vertex<Node>*> stack;
-    stack.push(currVertex);
-
-    while (!stack.empty()) {
-        currVertex = stack.top();
-        stack.pop();
-
-        if (curr_visit == network.getNumVertex()) {
-            for (auto edge : currVertex->getAdj()) {
-                if (edge->getDest()->getInfo().getId() == start) {
-                    ans += edge->getWeight();
-                    path.push_back(start);
-                    return ans;
-                }
-            }
-
-            return std::numeric_limits<double>::infinity();
-        }
-
-        double minDistance = std::numeric_limits<double>::max();
-        nextVertex = nullptr;
-
+    while (curr_visit < network.getNumVertex()) {
+        double minDistance = numeric_limits<double>::max();
+        Vertex<Node>* nextVertex = nullptr;
         for (auto edge : currVertex->getAdj()) {
-            Vertex<Node>* dest = edge->getDest();
-            if (!dest->isVisited() && edge->getWeight() < minDistance) {
+            if (edge->getWeight() < minDistance && !edge->getDest()->isVisited() &&
+            backtrackedNodes.find(edge->getDest()->getInfo().getId()) == backtrackedNodes.end()) {
                 minDistance = edge->getWeight();
-                nextVertex = dest;
+                nextVertex = edge->getDest();
             }
         }
 
         if (nextVertex == nullptr) {
             if (!path.empty()) {
+                int backtrackedNode = path.back();
+                currVertex->setVisited(false);  // Unvisit the current vertex
                 path.pop_back();
-                curr_visit--;
-                cout << "Performed backtrack\n";
+                backtrackedNodes.insert(backtrackedNode); // Mark this node as backtracked
+                if (!path.empty()) {
+                    int lastVertexId = path.back();
+                    currVertex = network.findVertex(Node(lastVertexId));
+                    currVertex->setVisited(false);
+                    curr_visit--;
+                    backtracks++;
+                } else {
+                    // No more vertices to backtrack to, TSP not possible
+                    return std::numeric_limits<double>::infinity();
+                }
             }
             continue;
         }
@@ -388,8 +380,13 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int start
         path.push_back(nextVertex->getInfo().getId());
         curr_visit++;
         nextVertex->setVisited(true);
-        stack.push(nextVertex);
+        currVertex = nextVertex;
+        backtrackedNodes.clear();
     }
+    int h = 2;
+    ans += currVertex->getAdj()[0] == nullptr ? numeric_limits<double>::infinity() : currVertex->getAdj()[0]->getWeight();
+    path.push_back(0);
+    backs = backtracks;
 
-    return std::numeric_limits<double>::infinity();
+    return ans;
 }
