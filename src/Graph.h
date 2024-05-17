@@ -9,6 +9,8 @@
 #include <queue>
 #include <limits>
 #include <algorithm>
+#include <unordered_map>
+#include "Node.h"
 
 template<class T>
 class Edge;
@@ -162,7 +164,7 @@ public:
 
     int getNumVertex() const;
 
-    std::vector<Vertex<T> *> getVertexSet() const;
+    std::unordered_map<int, Vertex<T> *> getVertexSet() const;
 
     std::vector<T> dfs() const;
 
@@ -179,7 +181,7 @@ public:
     std::vector<T> topsort() const;
 
 protected:
-    std::vector<Vertex<T> *> vertexSet;    // vertex set
+    std::unordered_map<int, Vertex<T> *> vertexSet;    // vertex set
 
     double **distMatrix = nullptr;   // dist matrix for Floyd-Warshall
     int **pathMatrix = nullptr;   // path matrix for Floyd-Warshall
@@ -416,7 +418,7 @@ int Graph<T>::getNumVertex() const {
 }
 
 template<class T>
-std::vector<Vertex<T> *> Graph<T>::getVertexSet() const {
+std::unordered_map<int, Vertex<T> *> Graph<T>::getVertexSet() const {
     return vertexSet;
 }
 
@@ -425,9 +427,10 @@ std::vector<Vertex<T> *> Graph<T>::getVertexSet() const {
  */
 template<class T>
 Vertex<T> *Graph<T>::findVertex(const T &in) const {
-    for (auto v: vertexSet)
-        if (v->getInfo() == in)
-            return v;
+    auto vertex = vertexSet.find(static_cast<Node>(in).getId());
+    if (vertex != vertexSet.end()){
+        return vertex->second;
+    }
     return nullptr;
 }
 
@@ -450,7 +453,7 @@ template<class T>
 bool Graph<T>::addVertex(const T &in) {
     if (findVertex(in) != nullptr)
         return false;
-    vertexSet.push_back(new Vertex<T>(in));
+    vertexSet[static_cast<Node>(in).getId()] = new Vertex(in);
     return true;
 }
 
@@ -541,9 +544,9 @@ template<class T>
 std::vector<T> Graph<T>::dfs() const {
     std::vector<T> res;
     for (auto v: vertexSet)
-        v->setVisited(false);
+        v.second->setVisited(false);
     for (auto v: vertexSet)
-        if (!v->isVisited())
+        if (!v.second->isVisited())
             dfsVisit(v, res);
     return res;
 }

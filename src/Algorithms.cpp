@@ -144,8 +144,8 @@ std::vector<Vertex<Node> *> Algorithms::prim(Graph<Node> * g) {
     vector<Vertex<Node> *> MST;
     MutablePriorityQueue<Vertex<Node> > myq_queue;
     for (auto vertex: g->getVertexSet()) {
-        vertex->setDist(INT_MAX);
-        myq_queue.insert(vertex);
+        vertex.second->setDist(INT_MAX);
+        myq_queue.insert(vertex.second);
     }
     Vertex<Node> *head = g->getVertexSet().at(0);
     head->setDist(0); // first vertex in out mST
@@ -243,7 +243,7 @@ double Algorithms::haversine(double lat1, double lon1,
 
 double Algorithms::tspNearestNeighbour(vector<int> &path) {
     for (auto vertex: network.getVertexSet()) {
-        vertex->setVisited(false);
+        vertex.second->setVisited(false);
     }
 
     Vertex<Node> * currVertex = network.findVertex(Node(0));
@@ -288,15 +288,15 @@ Vertex<Node> *Algorithms::findClosestNode(Vertex<Node> *current) {
     auto minDistance = numeric_limits<double>::max();
     Vertex<Node> *closest;
     for (auto vertex: network.getVertexSet()) {
-        for (auto edge : current->getAdj()) {
-            if (edge->getDest() == vertex || vertex->isVisited())
+        for (auto edge: current->getAdj()) {
+            if (edge->getDest() == vertex.second || vertex.second->isVisited())
                 continue;
         }
         double distance = haversine(current->getInfo().getLatitude(), current->getInfo().getLongitude(),
-                                    vertex->getInfo().getLatitude(), vertex->getInfo().getLongitude());
+                                    vertex.second->getInfo().getLatitude(), vertex.second->getInfo().getLongitude());
         if (distance < minDistance) {
             minDistance = distance;
-            closest = vertex;
+            closest = vertex.second;
         }
     }
 
@@ -335,7 +335,7 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int start
     }
 
     for (auto vertex : network.getVertexSet()) {
-        vertex->setVisited(false);
+        vertex.second->setVisited(false);
     }
 
     Vertex<Node>* currVertex = network.findVertex(Node(start));
