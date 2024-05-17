@@ -93,6 +93,10 @@ public:
 
     Vertex<Node> *findClosestNode(Vertex<Node> *current);
 
+    bool isTSPFeasible(int start);
+
+    double tspModifiedNearestNeighbour(std::vector<int>& path, int start);
+
     /**
      * @brief Gets the name of the node file.
      * @return The name of the node file.

@@ -10,6 +10,7 @@
 #include <climits>
 #include <cmath>
 #include <unordered_set>
+#include <stack>
 
 void Algorithms::readNodes() {
     cout << "Loading nodes..." << endl;
@@ -276,8 +277,7 @@ double Algorithms::tspNearestNeighbour(vector<int> &path) {
     }
 
     auto first = network.findVertex(Node(0))->getInfo();
-    ans += currVertex->getAdj()[0] == nullptr ? haversine(currVertex->getInfo().getLatitude(),
-                                                          currVertex->getInfo().getLongitude(),
+    ans += currVertex->getAdj()[0] == nullptr ? haversine(currVertex->getInfo().getLatitude(), currVertex->getInfo().getLongitude(),
                                                           first.getLatitude(), first.getLongitude()) :
            currVertex->getAdj()[0]->getWeight();
     path.push_back(0);
@@ -302,6 +302,97 @@ Vertex<Node> *Algorithms::findClosestNode(Vertex<Node> *current) {
     }
 
     return closest;
+}
+
+bool Algorithms::isTSPFeasible(int start) {
+    std::queue<Vertex<Node>*> q;
+    std::set<Vertex<Node>*> visited;
+
+    Vertex<Node>* startVertex = network.findVertex(Node(start));
+    if (!startVertex) return false;
+
+    q.push(startVertex);
+    visited.insert(startVertex);
+
+    while (!q.empty()) {
+        Vertex<Node>* curr = q.front();
+        q.pop();
+
+        for (auto edge : curr->getAdj()) {
+            Vertex<Node>* dest = edge->getDest();
+            if (visited.find(dest) == visited.end()) {
+                visited.insert(dest);
+                q.push(dest);
+            }
+        }
+    }
+
+    return visited.size() == network.getNumVertex();
+}
+
+double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int start) {
+    if (!isTSPFeasible(start)) {
+        return std::numeric_limits<double>::infinity(); // Indicate that TSP is not possible
+    }
+
+    for (auto vertex : network.getVertexSet()) {
+        vertex->setVisited(false);
+    }
+
+    Vertex<Node>* currVertex = network.findVertex(Node(start));
+    path.push_back(start);
+    Vertex<Node>* nextVertex = nullptr;
+    currVertex->setVisited(true);
+    double ans = 0;
+    int curr_visit = 1;
+
+    std::stack<Vertex<Node>*> stack;
+    stack.push(currVertex);
+
+    while (!stack.empty()) {
+        currVertex = stack.top();
+        stack.pop();
+
+        if (curr_visit == network.getNumVertex()) {
+            for (auto edge : currVertex->getAdj()) {
+                if (edge->getDest()->getInfo().getId() == start) {
+                    ans += edge->getWeight();
+                    path.push_back(start);
+                    return ans;
+                }
+            }
+
+            return std::numeric_limits<double>::infinity();
+        }
+
+        double minDistance = std::numeric_limits<double>::max();
+        nextVertex = nullptr;
+
+        for (auto edge : currVertex->getAdj()) {
+            Vertex<Node>* dest = edge->getDest();
+            if (!dest->isVisited() && edge->getWeight() < minDistance) {
+                minDistance = edge->getWeight();
+                nextVertex = dest;
+            }
+        }
+
+        if (nextVertex == nullptr) {
+            if (!path.empty()) {
+                path.pop_back();
+                curr_visit--;
+                cout << "Performed backtrack\n";
+            }
+            continue;
+        }
+
+        ans += minDistance;
+        path.push_back(nextVertex->getInfo().getId());
+        curr_visit++;
+        nextVertex->setVisited(true);
+        stack.push(nextVertex);
+    }
+
+    return std::numeric_limits<double>::infinity();
 }
 
 string Algorithms::getNodeFile() {
