@@ -106,6 +106,7 @@ double Algorithms::tspBacktracking(vector<int> &path) {
     network.findVertex(Node(0))->setVisited(true);
     findMinPathUpToN(0, network.getNumVertex(), 1, 0, ans, path, bestPath);
     path = bestPath;
+    resetNetwork();
     return ans;
 }
 
@@ -212,7 +213,7 @@ double Algorithms::tspTriangularAprox(vector<int> &path) {
         }
     }
 
-
+    resetNetwork();
     return ans;
 
 
@@ -280,6 +281,7 @@ double Algorithms::tspNearestNeighbour(vector<int> &path) {
                                                                   currVertex->getAdj()[0]->getWeight();
     path.push_back(0);
 
+    resetNetwork();
     return ans;
 }
 
@@ -330,7 +332,8 @@ bool Algorithms::isTSPFeasible(int start) {
 
 double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start) {
     if (!isTSPFeasible(start)) {
-        return std::numeric_limits<double>::infinity(); // inf = impossivel
+        resetNetwork();
+        return std::numeric_limits<double>::infinity(); // Indicate that TSP is not possible
     }
 
     for (auto vertex : network.getVertexSet()) {
@@ -368,6 +371,7 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
                         curr_visit--;
                         backtracks++;
                     } else {
+                        resetNetwork();
                         return std::numeric_limits<double>::infinity();
                     }
                 }
@@ -400,6 +404,7 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
                     curr_visit--;
                     backtracks++;
                 } else {
+                    resetNetwork();
                     return std::numeric_limits<double>::infinity();
                 }
             }
@@ -414,6 +419,21 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
         backtrackedNodes.clear(); // novo caminho começou, podemos voltar a visitar estes vértices.
     }
     backs = backtracks;
-
+    resetNetwork();
     return ans;
+}
+
+string Algorithms::getNodeFile() {
+    return this->nodeFile;
+}
+
+string Algorithms::getEdgeFile() {
+    return this->edgeFile;
+}
+
+void Algorithms::resetNetwork() {
+    for (auto v : network.getVertexSet()){
+        v.second->setVisited(false);
+        v.second->setProcesssing(false);
+    }
 }

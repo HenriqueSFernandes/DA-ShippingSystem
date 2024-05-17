@@ -44,6 +44,8 @@ public:
      */
     double tspBacktracking(vector<int> &path);
 
+    void resetNetwork();
+
     /**
      * @brief TODO
      * @param curIndex TODO
@@ -101,6 +103,10 @@ private:
     Graph<Node> network;
     string nodeFile;
     string edgeFile;
+
+    string getNodeFile();
+
+    string getEdgeFile();
 };
 
 
