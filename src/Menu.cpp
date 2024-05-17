@@ -26,9 +26,7 @@ Menu::Menu() : manager("", "") {}
 
 
 void Menu::start() {
-    manager = chooseGraphType();
-    cout << "Edge file: " << manager.getEdgeFile() << "\n";
-    cout << "Node file: " << manager.getNodeFile() << "\n";
+    loadGraph();
 }
 
 
@@ -74,7 +72,12 @@ Algorithms Menu::chooseGraphType() {
 }
 
 void Menu::loadGraph() {
-
+    manager = chooseGraphType();
+    if (manager.getNodeFile().empty() && manager.getEdgeFile().empty()) {
+        return;
+    }
+    cout << "Edge file: " << manager.getEdgeFile() << "\n";
+    cout << "Node file: " << manager.getNodeFile() << "\n";
     manager.readEdges();
     manager.readNodes();
 }

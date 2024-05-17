@@ -73,7 +73,7 @@ public:
     /**
      * @brief This functions asks the user to choose what type of graph to load.
      */
-    Algorithms chooseGraphType();
+    static Algorithms chooseGraphType();
 
     /**
      * @brief This function is responsible for loading the graph data.
