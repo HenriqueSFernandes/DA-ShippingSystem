@@ -206,6 +206,10 @@ double Algorithms::tspTriangularAprox(vector<int> &path) {
         }
 
         if (!edgeExists) {
+            if(nodeFile==""){
+                cout <<"ERROR INVALID GRAPH"<<endl;
+                return -1;
+            }
             // Edge does not exist, calculate distance using haversine formula
             double dist = haversine(v->getInfo().getLatitude(), v->getInfo().getLongitude(), w->getInfo().getLatitude(),
                                     w->getInfo().getLongitude());
