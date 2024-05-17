@@ -1,3 +1,4 @@
+#include <iomanip>
 #include "Menu.h"
 
 using namespace std;
@@ -123,7 +124,7 @@ void Menu::loadGraph() {
     manager.readNodes();
     auto time2 = chrono::high_resolution_clock::now();
     chrono::duration<double> totalTime = time2 - time1;
-    cout << "Time took to load the graph: " << totalTime.count() << " seconds\n";
+    cout << "Time took to load the graph: " << std::fixed << std::setprecision(6) << totalTime.count() << " seconds\n";
 }
 
 void Menu::chooseAlgorithm() {
@@ -147,9 +148,9 @@ void Menu::chooseAlgorithm() {
             auto time2 = chrono::high_resolution_clock::now();
             manager.resetNetwork();
             printPath(path);
-            cout << "Total distance: " << distance << endl;
+            cout << "Total distance: " << std::fixed << std::setprecision(2) << distance << endl;
             chrono::duration<double> totalTime = time2 - time1;
-            cout << "Duration: " << totalTime.count() << " seconds\n";
+            cout << "Duration: " << std::fixed << std::setprecision(6) << totalTime.count() << " seconds\n";
         } else if (option == "2") {
             vector<int> path;
             auto time1 = chrono::high_resolution_clock::now();
@@ -157,9 +158,9 @@ void Menu::chooseAlgorithm() {
             auto time2 = chrono::high_resolution_clock::now();
             manager.resetNetwork();
             printPath(path);
-            cout << "Total distance: " << distance << endl;
+            cout << "Total distance: " << std::fixed << std::setprecision(2) << distance << endl;
             chrono::duration<double> totalTime = time2 - time1;
-            cout << "Duration: " << totalTime.count() << " seconds\n";
+            cout << "Duration: " << std::fixed << std::setprecision(6) << totalTime.count() << " seconds\n";
         } else if (option == "3") {
             vector<int> path;
             auto time1 = chrono::high_resolution_clock::now();
@@ -167,9 +168,9 @@ void Menu::chooseAlgorithm() {
             auto time2 = chrono::high_resolution_clock::now();
             manager.resetNetwork();
             printPath(path);
-            cout << "Total distance: " << distance << endl;
+            cout << "Total distance: " << std::fixed << std::setprecision(2) << distance << endl;
             chrono::duration<double> totalTime = time2 - time1;
-            cout << "Duration: " << totalTime.count() << " seconds\n";
+            cout << "Duration: " << std::fixed << std::setprecision(6) << totalTime.count() << " seconds\n";
         } else if (option == "4") {
             cout << "What node do you want to choose as the starting node?\n";
             int start = getValidInt();
@@ -180,10 +181,10 @@ void Menu::chooseAlgorithm() {
             auto time2 = chrono::high_resolution_clock::now();
             manager.resetNetwork();
             printPath(path);
-            cout << "Total distance: " << distance << endl;
+            cout << "Total distance: " << std::fixed << std::setprecision(2) << distance << endl;
             cout << "Number of backtracks: " << numberOfBacktracks << endl;
             chrono::duration<double> totalTime = time2 - time1;
-            cout << "Duration: " << totalTime.count() << " seconds\n";
+            cout << "Duration: " << std::fixed << std::setprecision(6) << totalTime.count() << " seconds\n";
         } else if (option == "0") {
             break;
         } else {
