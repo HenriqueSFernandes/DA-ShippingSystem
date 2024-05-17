@@ -330,7 +330,7 @@ bool Algorithms::isTSPFeasible(int start) {
 
 double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start) {
     if (!isTSPFeasible(start)) {
-        return std::numeric_limits<double>::infinity(); // Indicate that TSP is not possible
+        return std::numeric_limits<double>::infinity(); // inf = impossivel
     }
 
     for (auto vertex : network.getVertexSet()) {
@@ -343,25 +343,56 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
     double ans = 0;
     int curr_visit = 1;
     int backtracks = 0;
-    std::unordered_set<int> backtrackedNodes;
+    bool finished = false;
+    std::unordered_set<int> backtrackedNodes; // set de vértices sem saída
 
-    while (curr_visit < network.getNumVertex()) {
+    while (curr_visit <= network.getNumVertex()) {
+        if (curr_visit == network.getNumVertex()) {
+            for (auto edge : currVertex->getAdj()) {
+                if (edge->getDest()->getInfo().getId() == start) {
+                    ans += edge->getWeight();
+                    path.push_back(start);
+                    finished = true;
+                }
+            }
+            if (!finished) {
+                if (!path.empty()) {
+                    int backtrackedNode = path.back();
+                    currVertex->setVisited(false);
+                    path.pop_back();
+                    backtrackedNodes.insert(backtrackedNode);
+                    if (!path.empty()) {
+                        int lastVertexId = path.back();
+                        currVertex = network.findVertex(Node(lastVertexId));
+                        currVertex->setVisited(false);
+                        curr_visit--;
+                        backtracks++;
+                    } else {
+                        return std::numeric_limits<double>::infinity();
+                    }
+                }
+                continue;
+            }
+        }
+
+        if (finished)
+            break;
+
         double minDistance = numeric_limits<double>::max();
         Vertex<Node>* nextVertex = nullptr;
         for (auto edge : currVertex->getAdj()) {
             if (edge->getWeight() < minDistance && !edge->getDest()->isVisited() &&
-            backtrackedNodes.find(edge->getDest()->getInfo().getId()) == backtrackedNodes.end()) {
+            backtrackedNodes.find(edge->getDest()->getInfo().getId()) == backtrackedNodes.end()) { // não se visitam os vértices sem saída
                 minDistance = edge->getWeight();
                 nextVertex = edge->getDest();
             }
         }
-
         if (nextVertex == nullptr) {
             if (!path.empty()) {
                 int backtrackedNode = path.back();
-                currVertex->setVisited(false);  // Unvisit the current vertex
+                currVertex->setVisited(false);
                 path.pop_back();
-                backtrackedNodes.insert(backtrackedNode); // Mark this node as backtracked
+                backtrackedNodes.insert(backtrackedNode);
                 if (!path.empty()) {
                     int lastVertexId = path.back();
                     currVertex = network.findVertex(Node(lastVertexId));
@@ -369,7 +400,6 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
                     curr_visit--;
                     backtracks++;
                 } else {
-                    // No more vertices to backtrack to, TSP not possible
                     return std::numeric_limits<double>::infinity();
                 }
             }
@@ -381,11 +411,8 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
         curr_visit++;
         nextVertex->setVisited(true);
         currVertex = nextVertex;
-        backtrackedNodes.clear();
+        backtrackedNodes.clear(); // novo caminho começou, podemos voltar a visitar estes vértices.
     }
-    int h = 2;
-    ans += currVertex->getAdj()[0] == nullptr ? numeric_limits<double>::infinity() : currVertex->getAdj()[0]->getWeight();
-    path.push_back(0);
     backs = backtracks;
 
     return ans;
