@@ -75,6 +75,9 @@ public:
      */
     static Algorithms chooseGraphType();
 
+
+    void chooseAlgorithm();
+
     /**
      * @brief This function is responsible for loading the graph data.
      *
@@ -130,6 +133,10 @@ public:
      * @return A pair of filenames of the chosen graph's nodes and edges, or a pair of empty strings if the user chooses to exit.
      */
     static std::pair<std::string, std::string> selectLargeGraph();
+
+    static void printPath(const vector<int>& path);
+
+    static int getValidInt();
 };
 
 

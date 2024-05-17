@@ -24,11 +24,51 @@ void Menu::clearScreen() {
 
 Menu::Menu() : manager("", "") {}
 
+int Menu::getValidInt() {
+    int number;
+    cin >> number;
+    while (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Invalid input. Please enter an integer: ";
+        std::cin >> number;
+    }
+    return number;
+}
 
 void Menu::start() {
     loadGraph();
+    string option;
+    while (true) {
+        cout << "\nWhat do you want to do?\n";
+        cout
+                << "1) Select another graph\n2) Run an algorithm\n0) Exit the program\n";
+        cin >> option;
+        if (option == "1") {
+            loadGraph();
+        } else if (option == "2") {
+            chooseAlgorithm();
+        } else if (option == "0") {
+            exit(0);
+        } else {
+            setColorRed();
+            cout << "Invalid option, please choose again.\n";
+            resetColor();
+        }
+    }
+
 }
 
+void Menu::printPath(const vector<int> &path) {
+    cout << "Path: ";
+    for (size_t i = 0; i < path.size(); ++i) {
+        cout << path[i];
+        if (i != path.size() - 1) {
+            cout << " -> ";
+        }
+    }
+    cout << endl;
+}
 
 Algorithms Menu::chooseGraphType() {
     clearScreen();
@@ -81,6 +121,54 @@ void Menu::loadGraph() {
     manager.readEdges();
     manager.readNodes();
 }
+
+void Menu::chooseAlgorithm() {
+    if (manager.getEdgeFile().empty() && manager.getNodeFile().empty()) {
+        setColorRed();
+        cout << "No valid graph has been selected.\n";
+        resetColor();
+        return;
+    }
+    clearScreen();
+    string option;
+    while (true) {
+        cout << "\nWhat algorithm do you want to run?\n";
+        cout
+                << "1) Backtracking\n2) Triangular Approximation\n3) Nearest Neighbour\n4) Optimized Nearest Neighbour\n0) Exit\n";
+        cin >> option;
+        if (option == "1") {
+            vector<int> path;
+            double distance = manager.tspBacktracking(path);
+            cout << "Total distance: " << distance << endl;
+            printPath(path);
+        } else if (option == "2") {
+            vector<int> path;
+            double distance = manager.tspTriangularApprox(path);
+            cout << "Total distance: " << distance << endl;
+            printPath(path);
+        } else if (option == "3") {
+
+            vector<int> path;
+            double distance = manager.tspNearestNeighbour(path);
+            cout << "Total distance: " << distance << endl;
+            printPath(path);
+        } else if (option == "4") {
+            cout << "What node do you want to choose as the starting node?\n";
+            int start = getValidInt();
+            vector<int> path;
+            double distance = manager.tspModifiedNearestNeighbour(path, start);
+            cout << "Total distance: " << distance << endl;
+            printPath(path);
+        } else if (option == "0") {
+            break;
+        } else {
+            setColorRed();
+            cout << "Invalid option, please choose again.\n";
+            resetColor();
+        }
+    }
+}
+
 
 string Menu::selectSmallGraph() {
     clearScreen();

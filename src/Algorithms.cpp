@@ -1,7 +1,3 @@
-//
-// Created by memechanic on 04-05-2024.
-//
-
 #include "Algorithms.h"
 #include "MutablePriorityQueue.h"
 #include <fstream>
@@ -13,6 +9,10 @@
 #include <stack>
 
 void Algorithms::readNodes() {
+    if (nodeFile.empty()){
+        cout << "The node file is not needed\n";
+        return;
+    }
     cout << "Loading nodes..." << endl;
     string id, longitude, latitude;
     ifstream nodeCsv(nodeFile);
@@ -37,8 +37,6 @@ void Algorithms::readNodes() {
             new_node.setLongitude(stod(longitude));
             new_node.setLatitude(stod(latitude));
             existingVertex->setInfo(new_node);
-            cout << "Node with id: " << id << " was given longitude: " << longitude << " & latitude: " << latitude
-                 << "\n";
         }
     }
 
@@ -78,7 +76,6 @@ void Algorithms::readEdges() {
         if (source == nullptr) {
             network.addVertex(origin);
             source = network.findVertex(origin);
-            cout << "Created node with id: " << originId << "\n";
         }
 
         auto target = Node(d);
@@ -86,13 +83,10 @@ void Algorithms::readEdges() {
         if (dest == nullptr) {
             network.addVertex(target);
             dest = network.findVertex(target);
-            cout << "Created node with id: " << targetId << "\n";
         }
 
         double dis = stod(distance);
-        network.addBidirectionalEdge(source->getInfo(), dest->getInfo(), dis);
-        cout << "Read edge from node " << originId << " to node " << targetId << ", distance: " << distance << "\n";
-    }
+        network.addBidirectionalEdge(source->getInfo(), dest->getInfo(), dis);    }
 
     cout << "Finished loading edges!" << "\n";
 
@@ -179,7 +173,7 @@ void dfs(Vertex<Node> *v, vector<int> &path) {
     }
 }
 
-double Algorithms::tspTriangularAprox(vector<int> &path) {
+double Algorithms::tspTriangularApprox(vector<int> &path) {
     double ans = 0;
     vector<Vertex<Node> *> MST = prim(&network);
     auto ver = MST[0];

@@ -75,7 +75,7 @@ public:
      * More infomation: TODO
      * @return TODO
      */
-    double tspTriangularAprox(vector<int> &path);
+    double tspTriangularApprox(vector<int> &path);
 
     /**
      * @brief This function uses the haversine distance to calculate distance between 2 points on a sphere.
