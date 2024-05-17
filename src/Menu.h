@@ -5,6 +5,13 @@
 #include <string>
 #include "Algorithms.h"
 
+/**
+ * @class Menu
+ * @brief The Menu class provides an interface for the user to interact with the application.
+ *
+ * The Menu class includes methods for choosing a graph type, selecting a graph, loading a graph, choosing an algorithm, and printing a path.
+ * It also includes utility methods for getting a valid integer from the user, clearing the console screen, and setting the console text color.
+ */
 class Menu {
 private:
     /**
@@ -75,7 +82,19 @@ public:
      */
     static Algorithms chooseGraphType();
 
-
+    /**
+     * @brief Allows the user to choose and run a TSP algorithm.
+     *
+     * This function first checks if a valid graph has been selected. If not, it displays an error message and returns.
+     * If a valid graph has been selected, it presents the user with a menu of TSP algorithms to choose from.
+     * The user can choose between Backtracking, Triangular Approximation, Nearest Neighbour, and Optimized Nearest Neighbour, or exit the menu.
+     * The user's choice is read from the console input.
+     *
+     * If the user chooses a valid option (1 to 4), the chosen algorithm is run on the selected graph.
+     * The total distance of the resulting path and the path itself are then displayed.
+     * If the user chooses to exit (option 0), the function returns.
+     * If the user chooses an invalid option, the function displays an error message and prompts the user to choose again.
+     */
     void chooseAlgorithm();
 
     /**
@@ -134,8 +153,26 @@ public:
      */
     static std::pair<std::string, std::string> selectLargeGraph();
 
-    static void printPath(const vector<int>& path);
+    /**
+     * @brief Prints the path of nodes.
+     *
+     * This function takes a vector of integers representing a path of nodes and prints it to the console.
+     * Each node in the path is printed, followed by an arrow (" -> "), except for the last node, which is printed without an arrow.
+     * The path is printed on a single line, followed by a newline character.
+     *
+     * @param path A vector of integers representing the path of nodes.
+     */
+    static void printPath(const vector<int> &path);
 
+    /**
+     * @brief Gets a valid integer from the user.
+     *
+     * This function reads an integer from the console input.
+     * If the input is not a valid integer, the function clears the input stream, ignores the invalid input, and prompts the user to enter an integer again.
+     * This process is repeated until a valid integer is entered.
+     *
+     * @return The valid integer entered by the user.
+     */
     static int getValidInt();
 };
 
