@@ -44,6 +44,8 @@ public:
      */
     double tspBacktracking(vector<int> &path);
 
+    void resetNetwork();
+
     /**
      * @brief TODO
      * @param curIndex TODO
