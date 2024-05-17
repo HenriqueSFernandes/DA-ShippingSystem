@@ -44,6 +44,8 @@ public:
      */
     double tspBacktracking(vector<int> &path);
 
+    void resetNetwork();
+
     /**
      * @brief TODO
      * @param curIndex TODO
@@ -95,7 +97,7 @@ public:
 
     bool isTSPFeasible(int start);
 
-    double tspModifiedNearestNeighbour(std::vector<int>& path, int start);
+    double tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start);
 
     /**
      * @brief Gets the name of the node file.
@@ -113,6 +115,10 @@ private:
     Graph<Node> network;
     string nodeFile;
     string edgeFile;
+
+    string getNodeFile();
+
+    string getEdgeFile();
 };
 
 
