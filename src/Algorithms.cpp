@@ -1,7 +1,3 @@
-//
-// Created by memechanic on 04-05-2024.
-//
-
 #include "Algorithms.h"
 #include "MutablePriorityQueue.h"
 #include <fstream>
@@ -12,6 +8,10 @@
 #include <unordered_set>
 
 void Algorithms::readNodes() {
+    if (nodeFile.empty()){
+        cout << "The node file is not needed\n";
+        return;
+    }
     cout << "Loading nodes..." << endl;
     string id, longitude, latitude;
     ifstream nodeCsv(nodeFile);
@@ -31,12 +31,11 @@ void Algorithms::readNodes() {
         getline(iss, longitude, ',');
         getline(iss, latitude, '\r');
         auto existingVertex = network.findVertex(Node(stoi(id)));
-        if(existingVertex != nullptr) {
+        if (existingVertex != nullptr) {
             Node new_node = Node(existingVertex->getInfo().getId());
             new_node.setLongitude(stod(longitude));
             new_node.setLatitude(stod(latitude));
             existingVertex->setInfo(new_node);
-            cout << "Node with id: " << id << " was given longitude: " << longitude << " & latitude: " << latitude << "\n";
         }
     }
 
@@ -76,7 +75,6 @@ void Algorithms::readEdges() {
         if (source == nullptr) {
             network.addVertex(origin);
             source = network.findVertex(origin);
-            cout << "Created node with id: " << originId << "\n";
         }
 
         auto target = Node(d);
@@ -84,13 +82,10 @@ void Algorithms::readEdges() {
         if (dest == nullptr) {
             network.addVertex(target);
             dest = network.findVertex(target);
-            cout << "Created node with id: " << targetId << "\n";
         }
 
         double dis = stod(distance);
-        network.addBidirectionalEdge(source->getInfo(), dest->getInfo(), dis);
-        cout << "Read edge from node " << originId << " to node " << targetId << ", distance: " << distance << "\n";
-    }
+        network.addBidirectionalEdge(source->getInfo(), dest->getInfo(), dis);    }
 
     cout << "Finished loading edges!" << "\n";
 
@@ -106,7 +101,6 @@ double Algorithms::tspBacktracking(vector<int> &path) {
     network.findVertex(Node(0))->setVisited(true);
     findMinPathUpToN(0, network.getNumVertex(), 1, 0, ans, path, bestPath);
     path = bestPath;
-    resetNetwork();
     return ans;
 }
 
@@ -139,7 +133,7 @@ void Algorithms::findMinPathUpToN(int curIndex, int n, int len, double cost, dou
     }
 }
 
-std::vector<Vertex<Node> *> Algorithms::prim(Graph<Node> * g) {
+std::vector<Vertex<Node> *> Algorithms::prim(Graph<Node> *g) {
     //initializar valores de dist
     vector<Vertex<Node> *> MST;
     MutablePriorityQueue<Vertex<Node> > myq_queue;
@@ -178,7 +172,7 @@ void dfs(Vertex<Node> *v, vector<int> &path) {
     }
 }
 
-double Algorithms::tspTriangularAprox(vector<int> &path) {
+double Algorithms::tspTriangularApprox(vector<int> &path) {
     double ans = 0;
     vector<Vertex<Node> *> MST = prim(&network);
     auto ver = MST[0];
@@ -212,8 +206,6 @@ double Algorithms::tspTriangularAprox(vector<int> &path) {
             ans += dist;
         }
     }
-
-    resetNetwork();
     return ans;
 
 
@@ -246,7 +238,7 @@ double Algorithms::tspNearestNeighbour(vector<int> &path) {
         vertex.second->setVisited(false);
     }
 
-    Vertex<Node> * currVertex = network.findVertex(Node(0));
+    Vertex<Node> *currVertex = network.findVertex(Node(0));
     path.push_back(0);
     Vertex<Node> *nextVertex;
     currVertex->setVisited(true);
@@ -278,10 +270,9 @@ double Algorithms::tspNearestNeighbour(vector<int> &path) {
     auto first = network.findVertex(Node(0))->getInfo();
     ans += currVertex->getAdj()[0] == nullptr ? haversine(currVertex->getInfo().getLatitude(), currVertex->getInfo().getLongitude(),
                                                           first.getLatitude(), first.getLongitude()) :
-                                                                  currVertex->getAdj()[0]->getWeight();
+           currVertex->getAdj()[0]->getWeight();
     path.push_back(0);
 
-    resetNetwork();
     return ans;
 }
 
@@ -332,7 +323,6 @@ bool Algorithms::isTSPFeasible(int start) {
 
 double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start) {
     if (!isTSPFeasible(start)) {
-        resetNetwork();
         return std::numeric_limits<double>::infinity(); // Indicate that TSP is not possible
     }
 
@@ -371,7 +361,6 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
                         curr_visit--;
                         backtracks++;
                     } else {
-                        resetNetwork();
                         return std::numeric_limits<double>::infinity();
                     }
                 }
@@ -404,7 +393,6 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
                     curr_visit--;
                     backtracks++;
                 } else {
-                    resetNetwork();
                     return std::numeric_limits<double>::infinity();
                 }
             }
@@ -419,7 +407,6 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
         backtrackedNodes.clear(); // novo caminho começou, podemos voltar a visitar estes vértices.
     }
     backs = backtracks;
-    resetNetwork();
     return ans;
 }
 
