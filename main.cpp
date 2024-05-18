@@ -9,8 +9,8 @@ int main() {
 
 
     //isto demora mais de 30 minutos no meu pc, tenham cuidado
-    string nodeFile = "../data/Real-world Graphs/graph3/nodes.csv";
-    string edgeFile = "../data/Real-world Graphs/graph3/edges.csv";
+    string nodeFile = "../data/Real-world Graphs/graph1/nodes.csv";
+    string edgeFile = "../data/Real-world Graphs/graph1/edges.csv";
 
     Algorithms manager = Algorithms(nodeFile, edgeFile);
 

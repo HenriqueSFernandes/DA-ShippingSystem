@@ -142,26 +142,26 @@ void Algorithms::findMinPathUpToN(int curIndex, int n, int len, double cost, dou
 }
 
 void Algorithms::prim() {
-// Check if the graph is empty
-
-// Initialize the vertices in the graph
+    double cost=0;
     for(auto v : network.getVertexSet()) {
         v.second->setDist(DBL_MAX); // Set distance to infinity
         v.second->setPath(nullptr); // Set path to null
         v.second->setVisited(false); // Mark as not visited
         v.second->setProcesssing(false); // Mark as not processing
     }
-// Select the first vertex as the starting point
     Vertex<Node>* s = network.getVertexSet().at(0);
-    s->setDist(0); // Set distance of the starting vertex to 0
-// Priority queue to store vertices based on their distances
+    s->setDist(0);
+
     MutablePriorityQueue<Vertex<Node>> q;
     q.insert(s);
-// Main loop for the Prim's algorithm
+
+
     while( ! q.empty() ) {
-// Extract the vertex with the minimum distance from the priority queue
+
         auto v = q.extractMin();
-        v->setVisited(true); // Mark the vertex as visited
+        cost+=v->getDist();
+
+        v->setVisited(true);
 // Iterate through the adjacent edges of the current vertex
         for(auto &e : v->getAdj()) {
             Vertex<Node>* w = e->getDest(); // Get the destination vertex of the edge
@@ -173,7 +173,7 @@ void Algorithms::prim() {
                     w->setDist(e->getWeight()); // Update the distance of the destination vertex
                     w->setPath(e); // Update the path to the current edge
 // If the destination vertex had infinite distance, insert it into the priority queue
-                    if (oldDist == INF) {
+                    if (oldDist == DBL_MAX) {
                         q.insert(w);
                     }
 // If the destination vertex had finite distance, decrease its key in the priority queue
@@ -183,8 +183,10 @@ void Algorithms::prim() {
                 }
             }
         }
+
     }
 // Return the set of vertices after the Prim's algorithm completes
+    cout << "Cost: " << cost << endl;
     return ;
 }
 
