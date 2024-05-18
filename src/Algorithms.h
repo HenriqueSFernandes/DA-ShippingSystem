@@ -68,7 +68,7 @@ public:
      * More information: TODO
      * @return TODO
      */
-    std::vector<Vertex<Node> *> prim(Graph<Node> *g);
+    void prim();
 
     /**
      * @brief TODO
@@ -98,9 +98,10 @@ public:
     bool isTSPFeasible(int start);
 
     double tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start);
+    Graph<Node> network;
 
 private:
-    Graph<Node> network;
+
     string nodeFile;
     string edgeFile;
 
