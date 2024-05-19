@@ -564,33 +564,36 @@ double Algorithms::tspDijkstraApprox(vector<int> &path, int start) {
         ver.second->setVisited(false);
     }
     int numVertex = network.getNumVertex();
-    int cur = 1;
-    path.push_back(v->getInfo().getId());
-    while (cur < numVertex) {
+    cout<<numVertex<<endl;
+    int cur=1;
+    path.push_back(start);
+    while( cur <numVertex){
         v->setVisited(true);
-        auto mino = DBL_MAX;
-        bool found = false;
-        for (auto edge: v->getAdj()) {
-            if (!edge->getDest()->isVisited() && edge->getWeight() < mino) {
-                path.push_back(edge->getDest()->getInfo().getId());
-                ans += edge->getWeight();
-                v = edge->getDest();
-                cur++;
-                mino = edge->getWeight();
-                found = true;
-                break;
+        double  mino=DBL_MAX;
+        auto next=v;
+        for( auto edge: v->getAdj()){
+            if(edge->getDest()->isVisited()==false && edge->getWeight()<mino){
+                next=edge->getDest();
+                mino=edge->getWeight();
             }
         }
-        if (!found) {
-            for (auto ver: network.getVertexSet()) {
-                if (!ver.second->isVisited()) {
-                    path.push_back(ver.second->getInfo().getId());
-                    vector<int> dummy;
-                    ans += dijkstra(v, ver.second, dummy);
-                    v = ver.second;
-                    cur++;
-                    break;
-                }
+        if(next != v){
+            ans+=mino;
+            path.push_back(next->getInfo().getId());
+            cur++;
+            v=next;
+        }
+        else{
+           for( auto ver : network.getVertexSet()){
+               if(ver.second->isVisited()==false){
+                   path.push_back(ver.second->getInfo().getId());
+                   vector<int> dummy;
+                   ans+=dijkstra(v,ver.second,dummy);
+
+                   v=ver.second;
+                   cur++;
+                   break;
+               }
             }
         }
     }
