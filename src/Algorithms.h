@@ -146,7 +146,7 @@ public:
      * @param lon2 Longitude of the second point in degrees.
      * @return The Haversine distance between the two points in kilometers.
      */
-    double haversine(double lat1, double lon1,
+    static double haversine(double lat1, double lon1,
                      double lat2, double lon2);
 
     /**
@@ -227,18 +227,19 @@ public:
      * @return The name of the edge file.
      */
     string getEdgeFile();
-    Graph<Node> network;
+
     double dijkstra(Vertex<Node> *source, Vertex<Node> *dest, vector<int> &path);
 
-    void MakeGraphComeplete();
+    void MakeGraphComplete();
 
     double tspNearestNeighbourChanged(vector<int> &path);
 
     Vertex<Node> *findClosestNodeChanged(Vertex<Node> *current);
 
     double tspDijkstraApprox(vector<int> &path, int start);
-private:
 
+private:
+    Graph<Node> network;
     string nodeFile;
     string edgeFile;
 };
