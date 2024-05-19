@@ -83,17 +83,24 @@ public:
     static Algorithms chooseGraphType();
 
     /**
-     * @brief Allows the user to choose and run a TSP algorithm.
+     * @brief This function allows the user to choose and run a specific algorithm.
      *
-     * This function first checks if a valid graph has been selected. If not, it displays an error message and returns.
-     * If a valid graph has been selected, it presents the user with a menu of TSP algorithms to choose from.
-     * The user can choose between Backtracking, Triangular Approximation, Nearest Neighbour, and Optimized Nearest Neighbour, or exit the menu.
-     * The user's choice is read from the console input.
+     * If no valid graph has been selected, the function will display an error message and return.
+     * Otherwise, it will clear the screen and prompt the user to choose an algorithm.
      *
-     * If the user chooses a valid option (1 to 4), the chosen algorithm is run on the selected graph.
-     * The total distance of the resulting path and the path itself are then displayed.
-     * If the user chooses to exit (option 0), the function returns.
-     * If the user chooses an invalid option, the function displays an error message and prompts the user to choose again.
+     * The user can choose from the following algorithms:
+     * 1) Backtracking
+     * 2) Triangular Approximation
+     * 3) Nearest Neighbour
+     * 4) Optimized Nearest Neighbour
+     *
+     * After the user chooses an algorithm, the function will run the algorithm, print the path,
+     * the total distance, and the duration it took to run the algorithm.
+     *
+     * If the user chooses the Optimized Nearest Neighbour algorithm, they will be prompted to
+     * choose a starting node.
+     *
+     * The user can exit the function by choosing the "Exit" option.
      */
     void chooseAlgorithm();
 

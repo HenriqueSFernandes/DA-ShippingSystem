@@ -3,7 +3,11 @@
 #define SHIPPING_SYSTEM_NODE_H
 
 /**
+ * @class Node
  * @brief This class represents a node of the graph.
+ *
+ * Each node has an id, longitude, and latitude. The id is unique for each node.
+ * The longitude and latitude represent the geographical coordinates of the node.
  */
 class Node {
 public:
