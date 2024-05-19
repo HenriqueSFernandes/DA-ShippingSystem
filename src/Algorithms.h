@@ -147,7 +147,7 @@ public:
      * @return The Haversine distance between the two points in kilometers.
      */
     static double haversine(double lat1, double lon1,
-                     double lat2, double lon2);
+                            double lat2, double lon2);
 
     /**
      * @brief Implements the Nearest Neighbour algorithm to solve the Travelling Salesman Problem (TSP).
@@ -213,8 +213,7 @@ public:
      * @param start The ID of the starting node.
      * @return The total cost of the optimal path.
      */
-    double tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start);
-    Graph<Node> network;
+    double tspModifiedNearestNeighbour(std::vector<int> &path, int &backs, int start);
 
     /**
      * @brief Gets the name of the node file.

@@ -429,7 +429,7 @@ std::unordered_map<int, Vertex<T> *> Graph<T>::getVertexSet() const {
 template<class T>
 Vertex<T> *Graph<T>::findVertex(const T &in) const {
     auto vertex = vertexSet.find(static_cast<Node>(in).getId());
-    if (vertex != vertexSet.end()){
+    if (vertex != vertexSet.end()) {
         return vertex->second;
     }
     return nullptr;

@@ -175,14 +175,12 @@ void Menu::chooseAlgorithm() {
             cout << "What node do you want to choose as the starting node?\n";
             int start = getValidInt();
             vector<int> path;
-            int numberOfBacktracks;
             auto time1 = chrono::high_resolution_clock::now();
-            double distance = manager.tspModifiedNearestNeighbour(path, numberOfBacktracks, start);
+            double distance = manager.tspDijkstraApprox(path, start);
             auto time2 = chrono::high_resolution_clock::now();
             manager.resetNetwork();
             printPath(path);
             cout << "Total distance: " << std::fixed << std::setprecision(2) << distance << endl;
-            cout << "Number of backtracks: " << numberOfBacktracks << endl;
             chrono::duration<double> totalTime = time2 - time1;
             cout << "Duration: " << std::fixed << std::setprecision(6) << totalTime.count() << " seconds\n";
         } else if (option == "0") {
