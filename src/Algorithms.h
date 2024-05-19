@@ -9,6 +9,7 @@
 #include <map>
 #include <string>
 #include <ostream>
+#include <chrono>
 
 
 using namespace std;
@@ -23,7 +24,7 @@ public:
      * @param node_file The name of the file with the nodes.
      * @param edge_file The name of the file with the edges.
      */
-    Algorithms(string node_file, string edge_file) : nodeFile(node_file), edgeFile(edge_file) {}
+    Algorithms(string node_file, string edge_file) : nodeFile(std::move(node_file)), edgeFile(std::move(edge_file)) {}
 
     /**
      * @brief Reads the contents of the nodes file.
@@ -77,7 +78,7 @@ public:
      * More infomation: TODO
      * @return TODO
      */
-    double tspTriangularAprox(vector<int> &path);
+    double tspTriangularApprox(vector<int> &path);
 
     /**
      * @brief This function uses the haversine distance to calculate distance between 2 points on a sphere.
@@ -89,8 +90,8 @@ public:
      */
     double haversine(double lat1, double lon1,
                      double lat2, double lon2);
-  
-    
+
+
     double tspNearestNeighbour(vector<int> &path);
 
     Vertex<Node> *findClosestNode(Vertex<Node> *current);
@@ -100,14 +101,22 @@ public:
     double tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start);
     Graph<Node> network;
 
+    /**
+     * @brief Gets the name of the node file.
+     * @return The name of the node file.
+     */
+    string getNodeFile();
+
+    /**
+     * @brief Gets the name of the edge file.
+     * @return The name of the edge file.
+     */
+    string getEdgeFile();
+
 private:
 
     string nodeFile;
     string edgeFile;
-
-    string getNodeFile();
-
-    string getEdgeFile();
 };
 
 
