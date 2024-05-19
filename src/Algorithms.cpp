@@ -191,7 +191,6 @@ void Algorithms::prim() {
     }
 // Return the set of vertices after the Prim's algorithm completes
     cout << "Cost: " << cost << endl;
-    return;
 }
 
 void dfs(Vertex<Node> *v, vector<int> &path) {
@@ -240,7 +239,7 @@ double Algorithms::tspTriangularApprox(vector<int> &path) {
 
 
         if (!edgeExists) {
-            if (nodeFile == "") {
+            if (nodeFile.empty()) {
                 cout << "ERROR INVALID GRAPH" << endl;
                 return -1;
             }
@@ -531,69 +530,41 @@ double Algorithms::dijkstra(Vertex<Node> *source, Vertex<Node> *dest, vector<int
     return res;
 }
 
-void Algorithms::MakeGraphComplete() {
-    vector<int> path;
-    set<pair<int, int>> processedPairs;
-
-    for (auto ver1: network.getVertexSet()) {
-        cout << ver1.second->getInfo().getId() << endl;
-        for (auto ver2: network.getVertexSet()) {
-            int id1 = ver1.second->getInfo().getId();
-            int id2 = ver2.second->getInfo().getId();
-
-            if (id1 < id2) {
-                pair<int, int> vertexPair = make_pair(id1, id2);
-
-                if (processedPairs.find(vertexPair) == processedPairs.end()) {
-                    double dist = dijkstra(ver1.second, ver2.second, path);
-                    network.addBidirectionalEdge(ver1.second->getInfo(), ver2.second->getInfo(), dist);
-                    processedPairs.insert(vertexPair);
-                }
-            }
-        }
-    }
-}
-
-
 double Algorithms::tspDijkstraApprox(vector<int> &path, int start) {
     double ans = 0;
-
-    cout << path.size() << endl;
     auto v = network.findVertex(Node(start));
     for (auto ver: network.getVertexSet()) {
         ver.second->setVisited(false);
     }
     int numVertex = network.getNumVertex();
-    cout<<numVertex<<endl;
-    int cur=1;
+    cout << numVertex << endl;
+    int cur = 1;
     path.push_back(start);
-    while( cur <numVertex){
+    while (cur < numVertex) {
         v->setVisited(true);
-        double  mino=DBL_MAX;
-        auto next=v;
-        for( auto edge: v->getAdj()){
-            if(edge->getDest()->isVisited()==false && edge->getWeight()<mino){
-                next=edge->getDest();
-                mino=edge->getWeight();
+        auto mino = DBL_MAX;
+        auto next = v;
+        for (auto edge: v->getAdj()) {
+            if (!edge->getDest()->isVisited() && edge->getWeight() < mino) {
+                next = edge->getDest();
+                mino = edge->getWeight();
             }
         }
-        if(next != v){
-            ans+=mino;
+        if (next != v) {
+            ans += mino;
             path.push_back(next->getInfo().getId());
             cur++;
-            v=next;
-        }
-        else{
-           for( auto ver : network.getVertexSet()){
-               if(ver.second->isVisited()==false){
-                   path.push_back(ver.second->getInfo().getId());
-                   vector<int> dummy;
-                   ans+=dijkstra(v,ver.second,dummy);
-
-                   v=ver.second;
-                   cur++;
-                   break;
-               }
+            v = next;
+        } else {
+            for (auto ver: network.getVertexSet()) {
+                if (!ver.second->isVisited()) {
+                    path.push_back(ver.second->getInfo().getId());
+                    vector<int> dummy;
+                    ans += dijkstra(v, ver.second, dummy);
+                    v = ver.second;
+                    cur++;
+                    break;
+                }
             }
         }
     }
