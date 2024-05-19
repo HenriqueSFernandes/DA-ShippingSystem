@@ -6,6 +6,7 @@
 #include <climits>
 #include <cmath>
 #include <unordered_set>
+#include <iomanip>
 #include <cfloat>
 
 void Algorithms::readNodes() {
@@ -37,6 +38,9 @@ void Algorithms::readNodes() {
             new_node.setLongitude(stod(longitude));
             new_node.setLatitude(stod(latitude));
             existingVertex->setInfo(new_node);
+
+            //cout << "Node with id: " << id << " was given longitude: " << longitude << " & latitude: " << latitude << "\n";
+
         }
     }
 
@@ -76,6 +80,9 @@ void Algorithms::readEdges() {
         if (source == nullptr) {
             network.addVertex(origin);
             source = network.findVertex(origin);
+
+            // cout << "Created node with id: " << originId << "\n";
+
         }
 
         auto target = Node(d);
@@ -83,12 +90,14 @@ void Algorithms::readEdges() {
         if (dest == nullptr) {
             network.addVertex(target);
             dest = network.findVertex(target);
+
         }
 
         double dis = stod(distance);
         network.addBidirectionalEdge(source->getInfo(), dest->getInfo(), dis);    }
 
-    cout << "Finished loading edges!" << "\n";
+
+    // cout << "Finished loading edges!" << "\n";
 
     edgeCsv.close();
 }
@@ -134,49 +143,74 @@ void Algorithms::findMinPathUpToN(int curIndex, int n, int len, double cost, dou
     }
 }
 
-std::vector<Vertex<Node> *> Algorithms::prim(Graph<Node> *g) {
-    //initializar valores de dist
-    vector<Vertex<Node> *> MST;
-    MutablePriorityQueue<Vertex<Node> > myq_queue;
-    for (auto vertex: g->getVertexSet()) {
-        vertex.second->setDist(INT_MAX);
-        myq_queue.insert(vertex.second);
+void Algorithms::prim() {
+    double cost=0;
+    for(auto v : network.getVertexSet()) {
+        v.second->setDist(DBL_MAX); // Set distance to infinity
+        v.second->setPath(nullptr); // Set path to null
+        v.second->setVisited(false); // Mark as not visited
+        v.second->setProcesssing(false); // Mark as not processing
+
     }
-    Vertex<Node> *head = g->getVertexSet().at(0);
-    head->setDist(0); // first vertex in out mST
-    myq_queue.decreaseKey(head);
-    while (!myq_queue.empty()) {
-        auto u = myq_queue.extractMin();
-        u->setProcesssing(true);
-        MST.push_back(u);
-        for (auto edge: u->getAdj()) {
-            Vertex<Node> *v = edge->getDest();
-            if (!v->isProcessing() && edge->getWeight() < v->getDist()) {
-                v->setDist(edge->getWeight());
-                myq_queue.decreaseKey(v);
-                v->setPath(edge);
+    Vertex<Node>* s = network.getVertexSet().at(0);
+    s->setDist(0);
+
+    MutablePriorityQueue<Vertex<Node>> q;
+    q.insert(s);
+
+
+    while( ! q.empty() ) {
+
+        auto v = q.extractMin();
+        cost+=v->getDist();
+
+        v->setVisited(true);
+// Iterate through the adjacent edges of the current vertex
+        for(auto &e : v->getAdj()) {
+            Vertex<Node>* w = e->getDest(); // Get the destination vertex of the edge
+// Check if the destination vertex is not visited
+            if (!w->isVisited()) {
+                auto oldDist = w->getDist(); // Get the current distance of the destination vertex
+// Check if the weight of the edge is less than the current distance of the destination vertex
+                if(e->getWeight() < oldDist) {
+                    w->setDist(e->getWeight()); // Update the distance of the destination vertex
+                    w->setPath(e); // Update the path to the current edge
+// If the destination vertex had infinite distance, insert it into the priority queue
+                    if (oldDist == DBL_MAX) {
+                        q.insert(w);
+                    }
+// If the destination vertex had finite distance, decrease its key in the priority queue
+                    else {
+                        q.decreaseKey(w);
+                    }
+                }
             }
         }
+
     }
-
-
-    return MST;
+// Return the set of vertices after the Prim's algorithm completes
+    cout << "Cost: " << cost << endl;
+    return ;
 }
 
 void dfs(Vertex<Node> *v, vector<int> &path) {
     path.push_back(v->getInfo().getId());
-    v->setVisited(true);
+    v->setProcesssing(true);
     for (auto edge: v->getAdj()) {
-        if (!edge->getDest()->isVisited() && edge->getDest()->getPath()->getOrig()->getInfo() == v->getInfo()) {
+        if (!edge->getDest()->isProcessing() && edge->getDest()->getPath() == edge) {
             dfs(edge->getDest(), path);
         }
     }
 }
 
-double Algorithms::tspTriangularApprox(vector<int> &path) {
+
+double Algorithms::tspTriangularAprox(vector<int> &path) {
+    ofstream myfile;
+    myfile.open ("../data/output.txt");
+
     double ans = 0;
-    vector<Vertex<Node> *> MST = prim(&network);
-    auto ver = MST[0];
+    prim();
+    auto ver = network.getVertexSet().at(0);
     dfs(ver, path);
 
 
@@ -189,29 +223,43 @@ double Algorithms::tspTriangularApprox(vector<int> &path) {
         }
 
         auto edges = v->getAdj();
+        auto Ingoing= v->getIncoming();
 
         bool edgeExists = false;
         for (auto e: edges) {
             if (e->getDest()->getInfo().getId() == w->getInfo().getId()) {
                 // Edge exists, use its distance
                 ans += e->getWeight();
+                //cout<<setprecision(2)<<e->getWeight()<<endl;
+                myfile<<fixed<<setprecision(2)<<e->getWeight()<<endl;
                 edgeExists = true;
                 break;
             }
         }
 
+
         if (!edgeExists) {
+            if(nodeFile==""){
+                cout <<"ERROR INVALID GRAPH"<<endl;
+                return -1;
+            }
             // Edge does not exist, calculate distance using haversine formula
             double dist = haversine(v->getInfo().getLatitude(), v->getInfo().getLongitude(), w->getInfo().getLatitude(),
                                     w->getInfo().getLongitude());
+            //cout<<setprecision(2)<<dist<<endl;
+            myfile<<setprecision(2)<<dist<<endl;
             ans += dist;
         }
     }
+
+
+    resetNetwork();
+    myfile.close();
+
     return ans;
 
 
 }
-
 double Algorithms::haversine(double lat1, double lon1,
                              double lat2, double lon2) {
     // distance between latitudes
@@ -226,14 +274,13 @@ double Algorithms::haversine(double lat1, double lon1,
     lat2 = (lat2) * M_PI / 180.0;
 
     // apply formulae
-    double a = pow(sin(dLat / 2), 2) +
-               pow(sin(dLon / 2), 2) *
+    double a = pow(sin(dLat / 2.0), 2.0) +
+               pow(sin(dLon / 2.0), 2.0) *
                cos(lat1) * cos(lat2);
-    double rad = 6371;
+    double rad = 6371000.00;
     double c = 2 * asin(sqrt(a));
     return rad * c;
 }
-
 double Algorithms::tspNearestNeighbour(vector<int> &path) {
     for (auto vertex: network.getVertexSet()) {
         vertex.second->setVisited(false);
@@ -376,7 +423,7 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
         Vertex<Node>* nextVertex = nullptr;
         for (auto edge : currVertex->getAdj()) {
             if (edge->getWeight() < minDistance && !edge->getDest()->isVisited() &&
-            backtrackedNodes.find(edge->getDest()->getInfo().getId()) == backtrackedNodes.end()) { // não se visitam os vértices sem saída
+                backtrackedNodes.find(edge->getDest()->getInfo().getId()) == backtrackedNodes.end()) { // não se visitam os vértices sem saída
                 minDistance = edge->getWeight();
                 nextVertex = edge->getDest();
             }
