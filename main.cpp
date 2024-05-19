@@ -17,7 +17,12 @@ int main() {
   vector<int> path;
 
   int backs=0;
-  cout<<manager.tspDijkstraApprox( path,0);
+  cout<<fixed<< setprecision(10)<<manager.tspDijkstraApprox( path,0);
+    cout<<"%%%"<<endl;
+  for( auto v : path)
+    cout<<v<<" ";
+  cout<<"%%%"<<endl;
+  cout<<path.size();
 
     return 0;
 }
