@@ -118,7 +118,7 @@ public:
      * @param g A pointer to the graph on which to run Prim's algorithm.
      * @return A vector of vertices that form the MST.
      */
-    std::vector<Vertex<Node> *> prim(Graph<Node> *g);
+    void prim();
 
     /**
      * @brief Implements the TSP using a triangular approximation.
@@ -214,6 +214,7 @@ public:
      * @return The total cost of the optimal path.
      */
     double tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start);
+    Graph<Node> network;
 
     /**
      * @brief Gets the name of the node file.
@@ -228,7 +229,7 @@ public:
     string getEdgeFile();
 
 private:
-    Graph<Node> network;
+
     string nodeFile;
     string edgeFile;
 };

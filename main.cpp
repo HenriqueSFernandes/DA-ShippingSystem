@@ -3,14 +3,15 @@
 #include "src/Menu.h"
 
 int main() {
+
 //    string nodeFile = "";
 //    string edgeFile = "../data/Toy-Graphs/shipping.csv";
 //    string nodeFile = "../data/Real-world Graphs/graph1/nodes.csv";
 //    string edgeFile = "../data/Real-world Graphs/graph1/edges.csv";
 
     //isto demora mais de 30 minutos no meu pc, tenham cuidado
-    //string nodeFile = "../data/Real-world Graphs/graph3/nodes.csv";
-    //string edgeFile = "../data/Real-world Graphs/graph3/edges.csv";
+    string nodeFile = "../data/Real-world Graphs/graph1/nodes.csv";
+    string edgeFile = "../data/Real-world Graphs/graph1/edges.csv";
 
 //    Algorithms manager = Algorithms(nodeFile, edgeFile);
 
@@ -38,11 +39,13 @@ int main() {
 //        cout << i << "<";
 //    }
     //cout<<"RES IS "<<manager.tspNearestNeighbour(path)<<endl;
+
 //    cout<<"RES IS "<<manager.tspModifiedNearestNeighbour(path, 500)<<endl;
 //    end = clock();
 
     Menu menu;
     menu.start();
+
 
     return 0;
 }

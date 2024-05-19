@@ -10,6 +10,7 @@
 #include <limits>
 #include <algorithm>
 #include <unordered_map>
+#include <cfloat>
 #include "Node.h"
 
 template<class T>
@@ -74,7 +75,7 @@ protected:
     bool visited = false; // used by DFS, BFS, Prim ...
     bool processing = false; // used by isDAG (in addition to the visited attribute)
     unsigned int indegree; // used by topsort
-    double dist = 0;
+    double dist = DBL_MAX;
     bool inSameSCC;
     Edge<T> *path = nullptr;
 
