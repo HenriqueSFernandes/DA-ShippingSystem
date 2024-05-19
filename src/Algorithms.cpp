@@ -6,6 +6,7 @@
 #include <climits>
 #include <cmath>
 #include <unordered_set>
+#include <cfloat>
 
 void Algorithms::readNodes() {
     if (nodeFile.empty()){
@@ -431,6 +432,7 @@ double Algorithms::dijkstra(Vertex<Node> *source, Vertex<Node> *dest, vector<int
     for (auto vertex : network.getVertexSet()) {
         vertex.second->setDist(INT_MAX);
         vertex.second->setPath(nullptr); // clear previous paths
+        vertex.second->setProcesssing(false);
     }
     source->setDist(0);
 
@@ -481,13 +483,13 @@ void Algorithms::MakeGraphComeplete(){
     set<pair<int, int>> processedPairs;
 
     for (auto ver1 : network.getVertexSet()) {
+        cout<<ver1.second->getInfo().getId()<<endl;
         for (auto ver2 : network.getVertexSet()) {
             int id1 = ver1.second->getInfo().getId();
             int id2 = ver2.second->getInfo().getId();
 
             if (id1 < id2) {
                 pair<int, int> vertexPair = make_pair(id1, id2);
-                resetNetwork();
 
                 if (processedPairs.find(vertexPair) == processedPairs.end()) {
                     double dist = dijkstra(ver1.second, ver2.second, path);
@@ -499,3 +501,45 @@ void Algorithms::MakeGraphComeplete(){
     }
 }
 
+
+double Algorithms::tspDijkstraApprox(vector<int> &path, int start) {
+    double ans = 0;
+
+    cout<<path.size()<<endl;
+    auto v=network.findVertex(Node(start));
+    for( auto ver : network.getVertexSet()){
+        ver.second->setVisited(false);
+    }
+    int numVertex = network.getNumVertex();
+    int cur=1;
+    path.push_back(v->getInfo().getId());
+    while( cur <numVertex){
+        v->setVisited(true);
+        double  mino=DBL_MAX;
+        bool found=false;
+        for( auto edge: v->getAdj()){
+            if(edge->getDest()->isVisited()==false && edge->getWeight()<mino){
+                path.push_back(edge->getDest()->getInfo().getId());
+                ans+=edge->getWeight();
+                v=edge->getDest();
+                cur++;
+                mino=edge->getWeight();
+                found=true;
+                break;
+            }
+        }
+        if(!found){
+           for( auto ver : network.getVertexSet()){
+               if(ver.second->isVisited()==false){
+                   path.push_back(ver.second->getInfo().getId());
+                   vector<int> dummy;
+                   ans+=dijkstra(v,ver.second,dummy);
+                   v=ver.second;
+                   cur++;
+                   break;
+               }
+            }
+        }
+    }
+    return ans;
+}

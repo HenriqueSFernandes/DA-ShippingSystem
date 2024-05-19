@@ -116,6 +116,11 @@ public:
 
     void MakeGraphComeplete();
 
+    double tspNearestNeighbourChanged(vector<int> &path);
+
+    Vertex<Node> *findClosestNodeChanged(Vertex<Node> *current);
+
+    double tspDijkstraApprox(vector<int> &path, int start);
 private:
 
     string nodeFile;
