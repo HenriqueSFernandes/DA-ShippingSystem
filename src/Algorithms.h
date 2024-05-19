@@ -111,9 +111,13 @@ public:
      * @return The name of the edge file.
      */
     string getEdgeFile();
+    Graph<Node> network;
+    double dijkstra(Vertex<Node> *source, Vertex<Node> *dest, vector<int> &path);
+
+    void MakeGraphComeplete();
 
 private:
-    Graph<Node> network;
+
     string nodeFile;
     string edgeFile;
 };

@@ -424,3 +424,78 @@ void Algorithms::resetNetwork() {
         v.second->setProcesssing(false);
     }
 }
+
+double Algorithms::dijkstra(Vertex<Node> *source, Vertex<Node> *dest, vector<int> &path) {
+    // Initialize the distance to all vertices to infinity and the distance to the source to 0
+    double res=0;
+    for (auto vertex : network.getVertexSet()) {
+        vertex.second->setDist(INT_MAX);
+        vertex.second->setPath(nullptr); // clear previous paths
+    }
+    source->setDist(0);
+
+    // Create a priority queue and insert all vertices
+    MutablePriorityQueue<Vertex<Node> > myq_queue;
+    myq_queue.insert(source);
+
+    while (!myq_queue.empty()) {
+        // Extract the vertex with the minimum distance
+        auto u = myq_queue.extractMin();
+        u->setProcesssing(true);
+
+        // Stop if we reached the destination
+        if (u == dest) break;
+
+        // For each adjacent vertex of u
+        for (auto edge : u->getAdj()) {
+            Vertex<Node> *v = edge->getDest();
+            int newDist = u->getDist() + edge->getWeight();
+
+            // If a shorter path to v is found
+            if (!v->isProcessing() && newDist < v->getDist()) {
+                v->setDist(newDist);
+                v->setPath(edge); // set the path to reach v
+                myq_queue.insert(v);
+            }
+        }
+    }
+
+    // Reconstruct the shortest path from source to dest
+    path.clear();
+    Vertex<Node> *v = dest;
+    while (v != nullptr) {
+        path.push_back(v->getInfo().getId()); // assuming getInfo returns the node or the node's identifier
+        auto edge = v->getPath();
+        if (edge == nullptr) break;
+        res+=edge->getWeight();
+        if(edge->getOrig()== nullptr){
+            cout<<"erro";
+        }
+        v = edge->getOrig();
+    }
+    std::reverse(path.begin(), path.end());
+    return res;
+}
+void Algorithms::MakeGraphComeplete(){
+    vector<int> path;
+    set<pair<int, int>> processedPairs;
+
+    for (auto ver1 : network.getVertexSet()) {
+        for (auto ver2 : network.getVertexSet()) {
+            int id1 = ver1.second->getInfo().getId();
+            int id2 = ver2.second->getInfo().getId();
+
+            if (id1 < id2) {
+                pair<int, int> vertexPair = make_pair(id1, id2);
+                resetNetwork();
+
+                if (processedPairs.find(vertexPair) == processedPairs.end()) {
+                    double dist = dijkstra(ver1.second, ver2.second, path);
+                    network.addBidirectionalEdge(ver1.second->getInfo(), ver2.second->getInfo(), dist);
+                    processedPairs.insert(vertexPair);
+                }
+            }
+        }
+    }
+}
+
