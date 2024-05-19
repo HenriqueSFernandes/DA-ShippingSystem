@@ -10,7 +10,7 @@
 #include <cfloat>
 
 void Algorithms::readNodes() {
-    if (nodeFile.empty()){
+    if (nodeFile.empty()) {
         cout << "The node file is not needed\n";
         return;
     }
@@ -94,7 +94,8 @@ void Algorithms::readEdges() {
         }
 
         double dis = stod(distance);
-        network.addBidirectionalEdge(source->getInfo(), dest->getInfo(), dis);    }
+        network.addBidirectionalEdge(source->getInfo(), dest->getInfo(), dis);
+    }
 
 
     // cout << "Finished loading edges!" << "\n";
@@ -144,35 +145,35 @@ void Algorithms::findMinPathUpToN(int curIndex, int n, int len, double cost, dou
 }
 
 void Algorithms::prim() {
-    double cost=0;
-    for(auto v : network.getVertexSet()) {
+    double cost = 0;
+    for (auto v: network.getVertexSet()) {
         v.second->setDist(DBL_MAX); // Set distance to infinity
         v.second->setPath(nullptr); // Set path to null
         v.second->setVisited(false); // Mark as not visited
         v.second->setProcesssing(false); // Mark as not processing
 
     }
-    Vertex<Node>* s = network.getVertexSet().at(0);
+    Vertex<Node> *s = network.getVertexSet().at(0);
     s->setDist(0);
 
     MutablePriorityQueue<Vertex<Node>> q;
     q.insert(s);
 
 
-    while( ! q.empty() ) {
+    while (!q.empty()) {
 
         auto v = q.extractMin();
-        cost+=v->getDist();
+        cost += v->getDist();
 
         v->setVisited(true);
 // Iterate through the adjacent edges of the current vertex
-        for(auto &e : v->getAdj()) {
-            Vertex<Node>* w = e->getDest(); // Get the destination vertex of the edge
+        for (auto &e: v->getAdj()) {
+            Vertex<Node> *w = e->getDest(); // Get the destination vertex of the edge
 // Check if the destination vertex is not visited
             if (!w->isVisited()) {
                 auto oldDist = w->getDist(); // Get the current distance of the destination vertex
 // Check if the weight of the edge is less than the current distance of the destination vertex
-                if(e->getWeight() < oldDist) {
+                if (e->getWeight() < oldDist) {
                     w->setDist(e->getWeight()); // Update the distance of the destination vertex
                     w->setPath(e); // Update the path to the current edge
 // If the destination vertex had infinite distance, insert it into the priority queue
@@ -190,7 +191,6 @@ void Algorithms::prim() {
     }
 // Return the set of vertices after the Prim's algorithm completes
     cout << "Cost: " << cost << endl;
-    return ;
 }
 
 void dfs(Vertex<Node> *v, vector<int> &path) {
@@ -204,9 +204,9 @@ void dfs(Vertex<Node> *v, vector<int> &path) {
 }
 
 
-double Algorithms::tspTriangularAprox(vector<int> &path) {
+double Algorithms::tspTriangularApprox(vector<int> &path) {
     ofstream myfile;
-    myfile.open ("../data/output.txt");
+    myfile.open("../data/output.txt");
 
     double ans = 0;
     prim();
@@ -223,7 +223,7 @@ double Algorithms::tspTriangularAprox(vector<int> &path) {
         }
 
         auto edges = v->getAdj();
-        auto Ingoing= v->getIncoming();
+        auto Ingoing = v->getIncoming();
 
         bool edgeExists = false;
         for (auto e: edges) {
@@ -231,7 +231,7 @@ double Algorithms::tspTriangularAprox(vector<int> &path) {
                 // Edge exists, use its distance
                 ans += e->getWeight();
                 //cout<<setprecision(2)<<e->getWeight()<<endl;
-                myfile<<fixed<<setprecision(2)<<e->getWeight()<<endl;
+                myfile << fixed << setprecision(2) << e->getWeight() << endl;
                 edgeExists = true;
                 break;
             }
@@ -239,15 +239,15 @@ double Algorithms::tspTriangularAprox(vector<int> &path) {
 
 
         if (!edgeExists) {
-            if(nodeFile==""){
-                cout <<"ERROR INVALID GRAPH"<<endl;
+            if (nodeFile.empty()) {
+                cout << "ERROR INVALID GRAPH" << endl;
                 return -1;
             }
             // Edge does not exist, calculate distance using haversine formula
             double dist = haversine(v->getInfo().getLatitude(), v->getInfo().getLongitude(), w->getInfo().getLatitude(),
                                     w->getInfo().getLongitude());
             //cout<<setprecision(2)<<dist<<endl;
-            myfile<<setprecision(2)<<dist<<endl;
+            myfile << setprecision(2) << dist << endl;
             ans += dist;
         }
     }
@@ -260,6 +260,7 @@ double Algorithms::tspTriangularAprox(vector<int> &path) {
 
 
 }
+
 double Algorithms::haversine(double lat1, double lon1,
                              double lat2, double lon2) {
     // distance between latitudes
@@ -281,6 +282,7 @@ double Algorithms::haversine(double lat1, double lon1,
     double c = 2 * asin(sqrt(a));
     return rad * c;
 }
+
 double Algorithms::tspNearestNeighbour(vector<int> &path) {
     for (auto vertex: network.getVertexSet()) {
         vertex.second->setVisited(false);
@@ -316,7 +318,8 @@ double Algorithms::tspNearestNeighbour(vector<int> &path) {
     }
 
     auto first = network.findVertex(Node(0))->getInfo();
-    ans += currVertex->getAdj()[0] == nullptr ? haversine(currVertex->getInfo().getLatitude(), currVertex->getInfo().getLongitude(),
+    ans += currVertex->getAdj()[0] == nullptr ? haversine(currVertex->getInfo().getLatitude(),
+                                                          currVertex->getInfo().getLongitude(),
                                                           first.getLatitude(), first.getLongitude()) :
            currVertex->getAdj()[0]->getWeight();
     path.push_back(0);
@@ -344,21 +347,21 @@ Vertex<Node> *Algorithms::findClosestNode(Vertex<Node> *current) {
 }
 
 bool Algorithms::isTSPFeasible(int start) {
-    std::queue<Vertex<Node>*> q;
-    std::set<Vertex<Node>*> visited;
+    std::queue<Vertex<Node> *> q;
+    std::set<Vertex<Node> *> visited;
 
-    Vertex<Node>* startVertex = network.findVertex(Node(start));
+    Vertex<Node> *startVertex = network.findVertex(Node(start));
     if (!startVertex) return false;
 
     q.push(startVertex);
     visited.insert(startVertex);
 
     while (!q.empty()) {
-        Vertex<Node>* curr = q.front();
+        Vertex<Node> *curr = q.front();
         q.pop();
 
-        for (auto edge : curr->getAdj()) {
-            Vertex<Node>* dest = edge->getDest();
+        for (auto edge: curr->getAdj()) {
+            Vertex<Node> *dest = edge->getDest();
             if (visited.find(dest) == visited.end()) {
                 visited.insert(dest);
                 q.push(dest);
@@ -369,16 +372,16 @@ bool Algorithms::isTSPFeasible(int start) {
     return visited.size() == network.getNumVertex();
 }
 
-double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start) {
+double Algorithms::tspModifiedNearestNeighbour(std::vector<int> &path, int &backs, int start) {
     if (!isTSPFeasible(start)) {
         return std::numeric_limits<double>::infinity(); // Indicate that TSP is not possible
     }
 
-    for (auto vertex : network.getVertexSet()) {
+    for (auto vertex: network.getVertexSet()) {
         vertex.second->setVisited(false);
     }
 
-    Vertex<Node>* currVertex = network.findVertex(Node(start));
+    Vertex<Node> *currVertex = network.findVertex(Node(start));
     path.push_back(start);
     currVertex->setVisited(true);
     double ans = 0;
@@ -389,7 +392,7 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
 
     while (curr_visit <= network.getNumVertex()) {
         if (curr_visit == network.getNumVertex()) {
-            for (auto edge : currVertex->getAdj()) {
+            for (auto edge: currVertex->getAdj()) {
                 if (edge->getDest()->getInfo().getId() == start) {
                     ans += edge->getWeight();
                     path.push_back(start);
@@ -420,10 +423,11 @@ double Algorithms::tspModifiedNearestNeighbour(std::vector<int>& path, int& back
             break;
 
         double minDistance = numeric_limits<double>::max();
-        Vertex<Node>* nextVertex = nullptr;
-        for (auto edge : currVertex->getAdj()) {
+        Vertex<Node> *nextVertex = nullptr;
+        for (auto edge: currVertex->getAdj()) {
             if (edge->getWeight() < minDistance && !edge->getDest()->isVisited() &&
-                backtrackedNodes.find(edge->getDest()->getInfo().getId()) == backtrackedNodes.end()) { // não se visitam os vértices sem saída
+                backtrackedNodes.find(edge->getDest()->getInfo().getId()) ==
+                backtrackedNodes.end()) { // não se visitam os vértices sem saída
                 minDistance = edge->getWeight();
                 nextVertex = edge->getDest();
             }
@@ -467,8 +471,102 @@ string Algorithms::getEdgeFile() {
 }
 
 void Algorithms::resetNetwork() {
-    for (auto v : network.getVertexSet()){
+    for (auto v: network.getVertexSet()) {
         v.second->setVisited(false);
         v.second->setProcesssing(false);
     }
+}
+
+double Algorithms::dijkstra(Vertex<Node> *source, Vertex<Node> *dest, vector<int> &path) {
+    // Initialize the distance to all vertices to infinity and the distance to the source to 0
+    double res = 0;
+    for (auto vertex: network.getVertexSet()) {
+        vertex.second->setDist(INT_MAX);
+        vertex.second->setPath(nullptr); // clear previous paths
+        vertex.second->setProcesssing(false);
+    }
+    source->setDist(0);
+
+    // Create a priority queue and insert all vertices
+    MutablePriorityQueue<Vertex<Node> > myq_queue;
+    myq_queue.insert(source);
+
+    while (!myq_queue.empty()) {
+        // Extract the vertex with the minimum distance
+        auto u = myq_queue.extractMin();
+        u->setProcesssing(true);
+
+        // Stop if we reached the destination
+        if (u == dest) break;
+
+        // For each adjacent vertex of u
+        for (auto edge: u->getAdj()) {
+            Vertex<Node> *v = edge->getDest();
+            int newDist = u->getDist() + edge->getWeight();
+
+            // If a shorter path to v is found
+            if (!v->isProcessing() && newDist < v->getDist()) {
+                v->setDist(newDist);
+                v->setPath(edge); // set the path to reach v
+                myq_queue.insert(v);
+            }
+        }
+    }
+
+    // Reconstruct the shortest path from source to dest
+    path.clear();
+    Vertex<Node> *v = dest;
+    while (v != nullptr) {
+        path.push_back(v->getInfo().getId()); // assuming getInfo returns the node or the node's identifier
+        auto edge = v->getPath();
+        if (edge == nullptr) break;
+        res += edge->getWeight();
+        if (edge->getOrig() == nullptr) {
+            cout << "erro";
+        }
+        v = edge->getOrig();
+    }
+    std::reverse(path.begin(), path.end());
+    return res;
+}
+
+double Algorithms::tspDijkstraApprox(vector<int> &path, int start) {
+    double ans = 0;
+    auto v = network.findVertex(Node(start));
+    for (auto ver: network.getVertexSet()) {
+        ver.second->setVisited(false);
+    }
+    int numVertex = network.getNumVertex();
+    cout << numVertex << endl;
+    int cur = 1;
+    path.push_back(start);
+    while (cur < numVertex) {
+        v->setVisited(true);
+        auto mino = DBL_MAX;
+        auto next = v;
+        for (auto edge: v->getAdj()) {
+            if (!edge->getDest()->isVisited() && edge->getWeight() < mino) {
+                next = edge->getDest();
+                mino = edge->getWeight();
+            }
+        }
+        if (next != v) {
+            ans += mino;
+            path.push_back(next->getInfo().getId());
+            cur++;
+            v = next;
+        } else {
+            for (auto ver: network.getVertexSet()) {
+                if (!ver.second->isVisited()) {
+                    path.push_back(ver.second->getInfo().getId());
+                    vector<int> dummy;
+                    ans += dijkstra(v, ver.second, dummy);
+                    v = ver.second;
+                    cur++;
+                    break;
+                }
+            }
+        }
+    }
+    return ans;
 }

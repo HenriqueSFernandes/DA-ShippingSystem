@@ -75,7 +75,7 @@ public:
      *
      * This function attempts to find the shortest possible route that visits each node exactly once and returns to the origin node.
      * It uses the Backtracking algorithm, which builds a solution incrementally, one piece at a time, removing solutions that fail to satisfy the constraints of the problem at any point of time (by time, here, is referred to the time elapsed till reaching any level of the search tree).
-     * Complexity: O(n!) TODO verify this
+     * Complexity: O(n!).
      *
      * @param path A reference to a vector of integers. The function will fill this vector with the order of nodes in the optimal path.
      * @return The total distance of the optimal path.
@@ -95,7 +95,7 @@ public:
      *
      * This function is a helper function for the tspBacktracking function.
      * It uses recursion and backtracking to find the shortest path that visits a specified number of nodes in the network graph.
-     * Complexity is O(n!) TODO verify this
+     * Complexity is O(n!).
      *
      * @param curIndex The index of the current node.
      * @param n The total number of nodes to visit.
@@ -113,7 +113,7 @@ public:
      *
      * This function uses a priority queue to select the next vertex to add to the MST. It starts with an arbitrary vertex,
      * sets its distance to 0, and then repeatedly adds the closest vertex that is not yet in the MST.
-     * Complexity is O(E log V) TODO verify this
+     * Complexity is O(E log V)
      *
      * @param g A pointer to the graph on which to run Prim's algorithm.
      * @return A vector of vertices that form the MST.
@@ -126,7 +126,7 @@ public:
      * This function first generates a Minimum Spanning Tree (MST) using Prim's algorithm. Then, it performs a DFS on the MST to get a path.
      * For each node in the path, it checks if an edge exists in the original graph to the next node in the path. If it does, it adds the weight of the edge to the total cost.
      * If an edge does not exist, it calculates the distance between the two nodes using the haversine formula and adds this distance to the total cost.
-     * Complexity is O(V^2) TODO verify this
+     * Complexity is O(V^2)
      *
      * @param path A reference to a vector of integers where the function will store the order of nodes in the path.
      * @return The total cost of the path.
@@ -146,8 +146,8 @@ public:
      * @param lon2 Longitude of the second point in degrees.
      * @return The Haversine distance between the two points in kilometers.
      */
-    double haversine(double lat1, double lon1,
-                     double lat2, double lon2);
+    static double haversine(double lat1, double lon1,
+                            double lat2, double lon2);
 
     /**
      * @brief Implements the Nearest Neighbour algorithm to solve the Travelling Salesman Problem (TSP).
@@ -156,7 +156,7 @@ public:
      * The distance between nodes is calculated using the weights of the edges in the graph. If an edge does not exist between the current node and the next node, the Haversine distance is used instead.
      * The function continues this process until all nodes have been visited, at which point it returns to the starting node.
      * The order of nodes visited is stored in the 'path' parameter, and the total cost of the path is returned as a double.
-     * Complexity is O(V^2) TODO verify this
+     * Complexity is O(V^2).
      *
      * @param path A reference to a vector of integers where the function will store the order of nodes in the path.
      * @return The total cost of the path.
@@ -169,7 +169,7 @@ public:
      * This function iterates over all the vertices in the network. For each vertex, it checks if an edge exists from the current node to the vertex and if the vertex has not been visited.
      * If these conditions are met, it calculates the Haversine distance between the current node and the vertex. If this distance is less than the minimum distance found so far, it updates the minimum distance and sets the closest vertex to the current vertex.
      * After iterating over all the vertices, it returns the closest vertex.
-     * Complexity is O(V^2) TODO verify this
+     * Complexity is O(V^2).
      *
      * @param current A pointer to the current vertex.
      * @return A pointer to the closest vertex to the current vertex.
@@ -184,7 +184,7 @@ public:
      * Then, it enters a loop where it dequeues a node, and for each of its adjacent nodes, if the node has not been visited, it adds it to the queue and the visited set.
      * The function continues this process until the queue is empty, which means all reachable nodes from the starting node have been visited.
      * Finally, it checks if the number of visited nodes is equal to the total number of nodes in the graph. If they are equal, it means all nodes are reachable from the starting node, so a solution to the TSP is feasible, and the function returns true. Otherwise, it returns false.
-     * Complexity is O(V + E) TODO verify this
+     * Complexity is O(V + E).
      *
      * @param start The ID of the starting node.
      * @return True if a solution to the TSP is feasible from the starting node, false otherwise.
@@ -206,15 +206,14 @@ public:
      * If no such vertex exists, it backtracks to the previous vertex in the path and continues the process.
      *
      * The function continues this process until all vertices have been visited. It then returns the total cost of the path.
-     * Complexity is O(V^2) TODO verify this
+     * Complexity is O(V^2).
      *
      * @param path A reference to a vector that will be filled with the order of nodes visited in the optimal path.
      * @param backs A reference to an integer that will be filled with the number of backtracks made during the search.
      * @param start The ID of the starting node.
      * @return The total cost of the optimal path.
      */
-    double tspModifiedNearestNeighbour(std::vector<int>& path, int& backs, int start);
-    Graph<Node> network;
+    double tspModifiedNearestNeighbour(std::vector<int> &path, int &backs, int start);
 
     /**
      * @brief Gets the name of the node file.
@@ -228,8 +227,40 @@ public:
      */
     string getEdgeFile();
 
-private:
+    /**
+     * @brief Implements the Dijkstra's algorithm to find the shortest path between two nodes in a graph.
+     *
+     * This function initializes the distance to all vertices to infinity and the distance to the source to 0.
+     * It then creates a priority queue and inserts all vertices.
+     * It extracts the vertex with the minimum distance and stops if it reached the destination.
+     * For each adjacent vertex of the current vertex, it checks if a shorter path to the vertex is found.
+     * If a shorter path is found, it updates the distance and path of the vertex and inserts it into the priority queue.
+     * After the shortest path is found, it reconstructs the path from the source to the destination.
+     * Complexity is O((V+E) log(V)).
+     *
+     * @param source A pointer to the source vertex.
+     * @param dest A pointer to the destination vertex.
+     * @param path A reference to a vector that will be filled with the nodes in the shortest path.
+     * @return The total cost of the shortest path.
+     */
+    double dijkstra(Vertex<Node> *source, Vertex<Node> *dest, vector<int> &path);
 
+    /**
+     * @brief Implements an approximation of the TSP using Dijkstra's algorithm.
+     *
+     * This function starts from a given node and iteratively visits the closest unvisited node until all nodes have been visited.
+     * If there are no unvisited nodes adjacent to the current node, it uses Dijkstra's algorithm to find the closest unvisited node in the entire graph.
+     * The function keeps track of the order of visited nodes and the total cost of the path.
+     * Complexity is O(V^2 * log(V)).
+     *
+     * @param path A reference to a vector that will be filled with the order of nodes visited in the path.
+     * @param start The ID of the starting node.
+     * @return The total cost of the path.
+     */
+    double tspDijkstraApprox(vector<int> &path, int start);
+
+private:
+    Graph<Node> network;
     string nodeFile;
     string edgeFile;
 };
