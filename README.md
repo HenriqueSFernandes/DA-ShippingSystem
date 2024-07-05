@@ -7,4 +7,4 @@ Made by:
 - João Mendes
 - José Sousa
 
-Grade: In Progress
+Grade: 19.6 / 20
